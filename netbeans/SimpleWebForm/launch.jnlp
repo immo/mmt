@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jnlp codebase="file:/path-to-jar/" href="launch.jnlp" spec="1.0+">
+    <information>
+        <title>JythonSwingApp</title>
+        <vendor>YourName</vendor>
+        <homepage href=""/>
+        <description>SimpleWebForm</description>
+        <description kind="short">SimpleWebForm</description>
+    </information>
+    <security>
+        <all-permissions/>
+    </security>
+    <resources>
+        <j2se version="1.5+"/>
+        <jar eager="true" href="SimpleWebForm.jar" main="true"/>
+        <jar href="lib/PlyJy.jar"/>
+        <jar href="lib/jython.jar"/>
+    </resources>
+    <application-desc main-class="simplewebform.Main">
+    </application-desc>
+</jnlp>
