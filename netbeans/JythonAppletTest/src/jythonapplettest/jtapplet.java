@@ -8,26 +8,41 @@ package jythonapplettest;
 import java.applet.*;
 import java.awt.*;
 
-import org.python.core.Py;
-import org.python.core.PyObject;
-import org.python.core.PySystemState;
+import org.jython.book.util.*;
 
+import org.python.core.PyObject;
+import org.python.core.PyString;
+import org.python.util.PythonInterpreter;
+import jythonapplettest.interfaces.JyAppletInterface;
 
 /**
  *
  * @author immanuel
  */
 public class jtapplet extends Applet {
-    int m_height, m_width;
+
+    PythonInterpreter interp;
+    JyAppletInterface applet;
+
+
     public void paint(Graphics m) {
-        m.setColor(Color.black);
-        for (int i = 0; i < 10; ++i) m.drawLine(m_width, m_height, i * m_width / 10, 0);
+        applet.paint(m);
     }
     
 public void init() {
-    m_width = getSize().width;
-    m_height = getSize().height;
-    setBackground(Color.green);
+
+    interp = new PythonInterpreter();
+    interp.execfile("JyApplet.py");
+
+    PyObject appletClass = interp.get("JyApplet");
+
+    PyObject appletObject = appletClass.__call__();
+    applet = (JyAppletInterface) appletObject.__tojava__(JyAppletInterface.class);
+
+    applet.setJavaApplet(this);
+    
+    applet.initHook();
+
     }
 
 }
