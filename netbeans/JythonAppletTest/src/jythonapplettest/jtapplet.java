@@ -32,7 +32,7 @@ public class jtapplet extends Applet {
 public void init() {
 
     interp = new PythonInterpreter();
-    interp.execfile("JyApplet.py");
+    interp.execfile("py-src/JyApplet.py");
 
     PyObject appletClass = interp.get("JyApplet");
 
