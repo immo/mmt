@@ -68,6 +68,10 @@ public class geruestApplet extends Applet {
 
         add(workscroll, BorderLayout.CENTER);
 
+        if (getParameter("imageurl")!=null) {
+            workspace.addImageToDesk(getParameter("imageurl"));
+        }
+
 
         addToolbarBtn(new JButton(this.addImageLabel), new ActionListener() {
 
