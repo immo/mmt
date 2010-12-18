@@ -49,12 +49,13 @@ public class geruestApplet extends Applet {
         toolbar.setFloatable(false);
         toolbar.setRollover(true);
 
-       
+
 
 
         toolscroll = new JScrollPane(toolbar);
         toolscroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-        toolscroll.setPreferredSize(new Dimension(getSize().width - 4, toolbar_height + toolscroll_height));
+        toolscroll.setPreferredSize(new Dimension(getSize().width - 4,
+                toolbar_height + toolscroll_height));
 
         add(toolscroll, BorderLayout.PAGE_START);
 
@@ -85,16 +86,34 @@ public class geruestApplet extends Applet {
             }
         });
 
+        addToolbarBtn(new JButton(this.addUrlImageLabel), new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                String urlinput = JOptionPane.showInputDialog(mySelf, "Enter url:", "Add image...", 1);
+                if (urlinput != null) {
+                    if (!urlinput.contains("://")) {
+                        urlinput = "http://" + urlinput;
+                    }
+                    workspace.addImageToDesk(urlinput);
+                    mySelf.repaint();
+                }
+            }
+        });
+
+        addToolbarBtn(new JButton(this.addClipboardImageLabel), new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                workspace.addImageToDesk("clipboard://");
+                mySelf.repaint();
+            }
+        });
+
+
     }
 
     public void addToolbarBtn(JButton btn, ActionListener action) {
         btn.addActionListener(action);
         toolbar.add(btn);
+
     }
 }
-//public void mouseClicked(MouseEvent e) { }
-//    public void mouseEntered(MouseEvent e) { }
-//    public void mouseExited(MouseEvent e) { }
-//    public void mousePressed(MouseEvent e) { }
-//    public void mouseReleased(MouseEvent e) { }
+
 
