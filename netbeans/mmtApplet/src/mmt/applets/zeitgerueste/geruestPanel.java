@@ -24,13 +24,16 @@ public class geruestPanel extends JPanel implements MouseListener,
     String mouseAction = "";
     int mouseObject = -1;
     int mouseActionX, mouseActionY;
+    
 
     public geruestPanel() {
         this.sheetImages = new ArrayList<imageOnDesk>();
         addMouseListener(this);
         addMouseMotionListener(this);
+        
     }
 
+    
     public int addImageToDesk(String imageUrl) {
         imageOnDesk img = new imageOnDesk(imageUrl);
         if (!sheetImages.add(img)) {
@@ -82,6 +85,9 @@ public class geruestPanel extends JPanel implements MouseListener,
             mouseAction = "drag";
         } else if (me.getButton() == MouseEvent.BUTTON3) {
             mouseAction = "scale";
+        } else if ((me.getButton() == MouseEvent.BUTTON1)
+                && (me.getModifiers() & MouseEvent.SHIFT_MASK) != MouseEvent.SHIFT_MASK) {
+            mouseAction = "scroll";
         } else {
             mouseAction = "";
         }
@@ -91,24 +97,42 @@ public class geruestPanel extends JPanel implements MouseListener,
 
     public void mouseReleased(MouseEvent me) {
         mouseAction = "";
+
+
+
+
     }
 
     public void mouseDragged(MouseEvent me) {
         int x = me.getPoint().x;
         int y = me.getPoint().y;
-        if (mouseObject > -1) {
+
+        if (mouseAction == "scroll") {
+
+            Rectangle r = new Rectangle(x, y, 1, 1);
+            scrollRectToVisible(r);
+
+        } else if (mouseObject > -1) {
             if (mouseAction == "drag") {
                 sheetImages.get(mouseObject).dragPosition(x - mouseActionX,
                         y - mouseActionY);
                 mouseActionX = x;
                 mouseActionY = y;
                 repaint();
+
+
+
+
             } else if (mouseAction == "scale") {
                 sheetImages.get(mouseObject).scaleByHeight(x - mouseActionX
                         + (y - mouseActionY) * 3);
                 mouseActionX = x;
                 mouseActionY = y;
                 repaint();
+
+
+
+
             }
         }
     }

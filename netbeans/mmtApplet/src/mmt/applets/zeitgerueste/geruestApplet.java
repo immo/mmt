@@ -66,6 +66,8 @@ public class geruestApplet extends Applet {
         workscroll.setPreferredSize(new Dimension(getSize().width - 4,
                 getSize().height - 10 - toolbar_height - toolscroll_height));
 
+        
+
         add(workscroll, BorderLayout.CENTER);
 
         if (getParameter("imageurl")!=null) {
