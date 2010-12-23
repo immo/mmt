@@ -30,7 +30,6 @@ public class chronologie {
         Set<int[]> neighborhood = new HashSet<int[]>();
         Map<Integer, Set<Integer>> filters = new HashMap<Integer,Set<Integer>>();
         Map<Integer, Set<Integer>> non_neighbors = new HashMap<Integer,Set<Integer>>();
-        Map<Integer, Set<Integer>> ideals = new HashMap<Integer,Set<Integer>>();
 
         Iterator<int[]> it = relation.iterator();
         while (it.hasNext()){
@@ -41,23 +40,14 @@ public class chronologie {
                 filters.put(t, new TreeSet<Integer>());
                 filters.get(t).add(t);
             }
-            if (!ideals.containsKey(t)) {
-                ideals.put(t, new TreeSet<Integer>());
-                ideals.get(t).add(t);
-            }
-
+            
             if (!filters.containsKey(s)) {
                 filters.put(s, new TreeSet<Integer>());
                 filters.get(s).add(s);
             }
-            if (!ideals.containsKey(s)) {
-                ideals.put(s, new TreeSet<Integer>());
-                ideals.get(s).add(s);
-            }
-
+            
             if (!filters.get(s).contains(t)) {                
                 filters.get(s).addAll(filters.get(t));
-                ideals.get(t).addAll(ideals.get(s));
             }
         }
 
@@ -88,6 +78,22 @@ public class chronologie {
             while (ups.hasNext()) {
                 Integer t = ups.next();
                 non_neighbors.get(s).addAll(filters.get(t));
+            }
+        }
+
+        fit = filters.keySet().iterator();
+        while (fit.hasNext()) {
+            Integer s = fit.next();
+            filters.get(s).removeAll(non_neighbors.get(s));
+        }
+
+        fit = filters.keySet().iterator();
+        while (fit.hasNext()) {
+            Integer s = fit.next();
+            Iterator<Integer> git = filters.get(s).iterator();
+            while (git.hasNext()) {
+                Integer t = git.next();
+                neighborhood.add(new int[]{s,t});
             }
         }
 
