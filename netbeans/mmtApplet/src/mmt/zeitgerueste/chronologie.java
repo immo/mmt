@@ -12,6 +12,13 @@ import java.util.*;
  */
 public class chronologie {
     private Set<int[]> relation;
+    private Set<int[]> neighborhood_relation;
+
+    public chronologie() {
+        relation = new HashSet<int[]>();
+        neighborhood_relation = new HashSet<int[]>();
+    }
+
 
     public boolean isLess(int x,int y) {
         return relation.contains(new int[]{x,y});
@@ -20,7 +27,9 @@ public class chronologie {
 
     public void closeRelation() {
         Set<int[]> closure = new HashSet<int[]>();
+        Set<int[]> neighborhood = new HashSet<int[]>();
         Map<Integer, Set<Integer>> filters = new HashMap<Integer,Set<Integer>>();
+        Map<Integer, Set<Integer>> non_neighbors = new HashMap<Integer,Set<Integer>>();
         Map<Integer, Set<Integer>> ideals = new HashMap<Integer,Set<Integer>>();
 
         Iterator<int[]> it = relation.iterator();
@@ -45,10 +54,15 @@ public class chronologie {
                 ideals.put(s, new TreeSet<Integer>());
                 ideals.get(s).add(s);
             }
-            
-            filters.get(s).addAll(filters.get(t));
-            ideals.get(t).addAll(ideals.get(s));
+
+            if (!filters.get(s).contains(t)) {                
+                filters.get(s).addAll(filters.get(t));
+                ideals.get(t).addAll(ideals.get(s));
+            }
         }
+
+
+
 
         Iterator<Integer> fit = filters.keySet().iterator();
         while (fit.hasNext()) {
@@ -59,5 +73,27 @@ public class chronologie {
                 closure.add(new int[]{s,t});
             }
         }
+
+        fit = filters.keySet().iterator();
+        while (fit.hasNext()) {
+            Integer s = fit.next();
+            filters.get(s).remove(s);
+            non_neighbors.put(s, new HashSet());
+        }
+
+        fit = filters.keySet().iterator();
+        while (fit.hasNext()) {
+            Integer s = fit.next();
+            Iterator<Integer> ups = filters.get(s).iterator();
+            while (ups.hasNext()) {
+                Integer t = ups.next();
+                non_neighbors.get(s).addAll(filters.get(t));
+            }
+        }
+
+
+
+        this.neighborhood_relation = neighborhood;
+        this.relation = closure;
     }
 }
