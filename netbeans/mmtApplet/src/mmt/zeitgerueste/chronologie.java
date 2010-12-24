@@ -24,6 +24,14 @@ public class chronologie {
         return relation.contains(new int[]{x,y});
     }
 
+    public boolean addPair(int x,int y) {
+        if (isLess(y,x) || (x==y))
+            return false;
+        if (!isLess(x,y)) {
+
+        }
+        return true;
+    }
 
     public void closeRelation() {
         Set<int[]> closure = new HashSet<int[]>();
