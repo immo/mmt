@@ -41,8 +41,6 @@ public class chronologie {
             return false;
         }
 
-        neighborhood_relation.remove(new int[]{x, y});
-
         Iterator<int[]> it = neighborhood_relation.iterator();
         while (it.hasNext()) {
             int[] pair = it.next();
