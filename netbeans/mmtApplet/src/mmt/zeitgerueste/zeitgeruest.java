@@ -13,4 +13,11 @@ import java.util.*;
  */
 public class zeitgeruest {
     ArrayList<traeger> T;
+    chronologie X;
+
+    public zeitgeruest() {
+        T = new ArrayList<traeger>();
+        X = new chronologie();
+    }
+
 }

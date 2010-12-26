@@ -2,15 +2,16 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package mmt.zeitgerueste;
 
 import java.util.*;
+
 /**
  *
  * @author immanuel
  */
 public class chronologie {
+
     private Set<int[]> relation;
     private Set<int[]> neighborhood_relation;
 
@@ -19,28 +20,52 @@ public class chronologie {
         neighborhood_relation = new HashSet<int[]>();
     }
 
-
-    public boolean isLess(int x,int y) {
-        return relation.contains(new int[]{x,y});
+    public boolean isLess(int x, int y) {
+        return relation.contains(new int[]{x, y});
     }
 
-    public boolean addPair(int x,int y) {
-        if (isLess(y,x) || (x==y))
+    public boolean addPair(int x, int y) {
+        if (isLess(y, x) || (x == y)) {
             return false;
-        if (!isLess(x,y)) {
-
         }
+        if (!isLess(x, y)) {
+            relation = neighborhood_relation;
+            relation.add(new int[]{x, y});
+            closeRelation();
+        }
+        return true;
+    }
+
+    public boolean removePair(int x, int y) {
+        if (!isLess(x, y)) {
+            return false;
+        }
+
+        neighborhood_relation.remove(new int[]{x, y});
+
+        Iterator<int[]> it = neighborhood_relation.iterator();
+        while (it.hasNext()) {
+            int[] pair = it.next();
+            int s = pair[0];
+            int t = pair[1];
+
+            if ((t == y) && isLess(x, s))  {
+                it.remove();
+            }
+        }
+        relation = neighborhood_relation;
+        closeRelation();
         return true;
     }
 
     public void closeRelation() {
         Set<int[]> closure = new HashSet<int[]>();
         Set<int[]> neighborhood = new HashSet<int[]>();
-        Map<Integer, Set<Integer>> filters = new HashMap<Integer,Set<Integer>>();
-        Map<Integer, Set<Integer>> non_neighbors = new HashMap<Integer,Set<Integer>>();
+        Map<Integer, Set<Integer>> filters = new HashMap<Integer, Set<Integer>>();
+        Map<Integer, Set<Integer>> non_neighbors = new HashMap<Integer, Set<Integer>>();
 
         Iterator<int[]> it = relation.iterator();
-        while (it.hasNext()){
+        while (it.hasNext()) {
             int[] pair = it.next();
             int s = pair[0];
             int t = pair[1];
@@ -48,13 +73,13 @@ public class chronologie {
                 filters.put(t, new TreeSet<Integer>());
                 filters.get(t).add(t);
             }
-            
+
             if (!filters.containsKey(s)) {
                 filters.put(s, new TreeSet<Integer>());
                 filters.get(s).add(s);
             }
-            
-            if (!filters.get(s).contains(t)) {                
+
+            if (!filters.get(s).contains(t)) {
                 filters.get(s).addAll(filters.get(t));
             }
         }
@@ -68,7 +93,7 @@ public class chronologie {
             Iterator<Integer> git = filters.get(s).iterator();
             while (git.hasNext()) {
                 Integer t = git.next();
-                closure.add(new int[]{s,t});
+                closure.add(new int[]{s, t});
             }
         }
 
@@ -101,7 +126,7 @@ public class chronologie {
             Iterator<Integer> git = filters.get(s).iterator();
             while (git.hasNext()) {
                 Integer t = git.next();
-                neighborhood.add(new int[]{s,t});
+                neighborhood.add(new int[]{s, t});
             }
         }
 
