@@ -5,6 +5,7 @@
 package mmt.zeitgerueste;
 
 import java.util.*;
+import java.io.*;
 
 /**
  *
@@ -59,6 +60,7 @@ public class chronologie {
     public void closeRelation() {
         Set<int[]> closure = new HashSet<int[]>();
         Set<int[]> neighborhood = new HashSet<int[]>();
+        Map<Integer, Set<Integer>> ideals = new HashMap<Integer, Set<Integer>>();
         Map<Integer, Set<Integer>> filters = new HashMap<Integer, Set<Integer>>();
         Map<Integer, Set<Integer>> non_neighbors = new HashMap<Integer, Set<Integer>>();
 
@@ -71,19 +73,32 @@ public class chronologie {
                 filters.put(t, new TreeSet<Integer>());
                 filters.get(t).add(t);
             }
-
             if (!filters.containsKey(s)) {
                 filters.put(s, new TreeSet<Integer>());
                 filters.get(s).add(s);
             }
+            if (!ideals.containsKey(t)) {
+                ideals.put(t, new TreeSet<Integer>());
+                ideals.get(t).add(t);
+            }
+            if (!ideals.containsKey(s)) {
+                ideals.put(s, new TreeSet<Integer>());
+                ideals.get(s).add(s);
+            }
 
             if (!filters.get(s).contains(t)) {
-                filters.get(s).addAll(filters.get(t));
+                Iterator<Integer> sit = ideals.get(s).iterator();
+                while (sit.hasNext()) {
+                    Integer below_s = sit.next();
+                    filters.get(below_s).addAll(filters.get(t));
+                }
+                Iterator<Integer> tit = filters.get(t).iterator();
+                while (tit.hasNext()) {
+                    Integer above_t = tit.next();
+                    ideals.get(above_t).addAll(ideals.get(s));
+                }
             }
         }
-
-
-
 
         Iterator<Integer> fit = filters.keySet().iterator();
         while (fit.hasNext()) {
@@ -91,7 +106,15 @@ public class chronologie {
             Iterator<Integer> git = filters.get(s).iterator();
             while (git.hasNext()) {
                 Integer t = git.next();
-                closure.add(new int[]{s, t});
+                closure.add(new int[]{s, t});                
+            }
+        }
+
+        it = closure.iterator();
+        while (it.hasNext()) {
+            int[] pair = it.next();
+            if (pair[0]==pair[1]) {
+                it.remove();
             }
         }
 
@@ -133,4 +156,47 @@ public class chronologie {
         this.neighborhood_relation = neighborhood;
         this.relation = closure;
     }
+
+    public static void main(String args[])
+	throws java.io.IOException, java.io.FileNotFoundException
+    {
+        System.out.println("Testing chronology class...");
+
+        chronologie c = new chronologie();
+        c.addPair(0,1);
+        c.addPair(1,2);
+        c.addPair(0,3);
+        c.addPair(0,4);
+        c.addPair(-2,-1);
+        c.addPair(-4, -1);
+        c.addPair(-1,1);
+
+        System.out.println("Relation pairs:");
+        Iterator<int[]> it = c.relation.iterator();
+        while (it.hasNext()) {
+            int[] pair = it.next();
+            System.out.println("("+pair[0]+", "+pair[1]+")");
+        }
+
+        System.out.println("Neighbor pairs:");
+        it = c.neighborhood_relation.iterator();
+        while (it.hasNext()) {
+            int[] pair = it.next();
+            System.out.println("("+pair[0]+", "+pair[1]+")");
+        }
+
+        System.out.println("Adding (-4,-2)...");
+        c.addPair(-4,-2);
+
+        System.out.println("Neighbor pairs:");
+        it = c.neighborhood_relation.iterator();
+        while (it.hasNext()) {
+            int[] pair = it.next();
+            System.out.println("("+pair[0]+", "+pair[1]+")");
+        }
+        
+
+        
+    }
+
 }
