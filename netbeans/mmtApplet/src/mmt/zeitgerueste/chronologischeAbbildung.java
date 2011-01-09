@@ -17,6 +17,18 @@ public class chronologischeAbbildung {
     public zeitgeruest target;
     public Map<Integer, Integer> map;
 
+    public chronologischeAbbildung(zeitgeruest source, zeitgeruest target) {
+        this.source = source;
+        this.target = target;
+    }
+    
+    public chronologischeAbbildung mapCopy() {
+        chronologischeAbbildung copy = new chronologischeAbbildung(source, target);
+        copy.map = new HashMap<Integer, Integer>();
+        copy.map.putAll(this.map);
+        return copy;
+    }
+
     public boolean isPartialWeaklyMonotone() {
         Iterator<int[]> it = source.X.getNeighbors().iterator();
         while (it.hasNext()) {
@@ -100,25 +112,12 @@ public class chronologischeAbbildung {
         return true;
     }
 
+    public boolean isValid() {
+        return isSurjective() && isPartialWeaklyMonotone() && isPartialTargetOrderDefining();
+    }
+
     public static void main(String args[])
             throws java.io.IOException, java.io.FileNotFoundException {
-        Set<Integer> mi = new TreeSet<Integer>();
-        mi.add(2);
-        mi.add(4);
-        mi.add(5);
-        Iterator<Integer> it = mi.iterator();
-        while (it.hasNext()) {
-            Integer s = it.next();
-            Iterator<Integer> jt = mi.iterator();
-            while (jt.hasNext()){
-                Integer t = jt.next();
-                System.out.println(s+", "+t);
-                if (s+t>7){
-                    it = (new TreeSet<Integer>()).iterator();
-                    jt = it;
-                }
-
-            }
-        }
+        
     }
 }

@@ -13,8 +13,27 @@ import java.util.*;
 public class traeger {
     ArrayList<Object> annotations;
 
+    public traeger() {
+        annotations = new ArrayList<Object>();
+    }
+
+
+
     public void addAnotation(Object o) {
         annotations.add(o);
     }
+
+    @Override
+    public String toString() {
+        String anreps = "";
+        Iterator it = annotations.iterator();
+        while (it.hasNext()) {
+            anreps += " " + it.next();
+        }
+        
+        return anreps.trim();
+    }
+
+
 
 }
