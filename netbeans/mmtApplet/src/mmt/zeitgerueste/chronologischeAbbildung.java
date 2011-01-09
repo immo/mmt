@@ -83,7 +83,7 @@ public class chronologischeAbbildung {
                         }
                     }
                 }
-                isRectangle.put(new int[]{x,y}, counterExample);
+                isRectangle.put(new int[]{x,y}, !counterExample);
             }
         }
 
