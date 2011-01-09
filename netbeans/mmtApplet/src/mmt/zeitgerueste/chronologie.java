@@ -27,6 +27,30 @@ public class chronologie {
         return relation.contains(new int[]{x, y});
     }
 
+    public boolean isLowerNeighbor(int x, int y) {
+        return neighborhood_relation.contains(new int[]{x,y});
+    }
+
+    public Set<Integer> getFilter(int x) {
+        if (!this.filters.containsKey(x)) {
+            this.filters.put(x, new HashSet<Integer>());
+            this.filters.get(x).add(x);
+        }
+        return this.filters.get(x);
+    }
+
+    public Set<Integer> getIdeal(int x) {
+        if (!this.ideals.containsKey(x)) {
+            this.ideals.put(x, new HashSet<Integer>());
+            this.ideals.get(x).add(x);
+        }
+        return this.ideals.get(x);
+    }
+
+    public Set<int[]> getNeighbors() {
+        return this.neighborhood_relation;
+    }
+
     public boolean addPair(int x, int y) {
         if (isLess(y, x) || (x == y)) {
             return false;
@@ -183,13 +207,7 @@ public class chronologie {
         this.relation = closure;
     }
 
-    public boolean isIsomorphic(chronologie other) {
-        if (neighborhood_relation.size()!=other.neighborhood_relation.size())
-            return false;
 
-
-        return false;
-    }
 
     public static void main(String args[])
 	throws java.io.IOException, java.io.FileNotFoundException

@@ -19,5 +19,4 @@ public class zeitgeruest {
         T = new ArrayList<traeger>();
         X = new chronologie();
     }
-
 }
