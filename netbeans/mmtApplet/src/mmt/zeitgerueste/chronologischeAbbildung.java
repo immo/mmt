@@ -70,18 +70,34 @@ public class chronologischeAbbildung {
             while (jt.hasNext()){
                 Integer y = jt.next();
                 Iterator<Integer> xinv = fibers.get(x).iterator();
+                boolean counterExample = false;
                 while (xinv.hasNext()) {
                     Integer xfinv = xinv.next();
                     Iterator<Integer> yinv = fibers.get(y).iterator();
                     while (yinv.hasNext()){
                         Integer yfinv = yinv.next();
-
+                        if (!source.X.isLess(xfinv, yfinv)){
+                            xinv = (new TreeSet<Integer>()).iterator();
+                            yinv = xinv;
+                            counterExample = true;
+                        }
                     }
                 }
+                isRectangle.put(new int[]{x,y}, counterExample);
             }
         }
 
-        return false;
+        Iterator<int[]> pairs = isRectangle.keySet().iterator();
+
+        while(pairs.hasNext()){
+            int[] pair = pairs.next();
+
+            if (target.X.isLess(pair[0], pair[1])!=isRectangle.get(pair)){
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static void main(String args[])
