@@ -17,7 +17,7 @@ public class chronologischeAbbildung {
     public zeitgeruest target;
     public Map<Integer, Integer> map;
 
-    public boolean isNeighborCompatible() {
+    public boolean isPartialWeaklyMonotone() {
         Iterator<int[]> it = source.X.getNeighbors().iterator();
         while (it.hasNext()) {
             int[] pair = it.next();
@@ -34,6 +34,20 @@ public class chronologischeAbbildung {
         }
         return true;
     }
+
+    public boolean isSurjective() {
+        Set<Integer> noImage = new TreeSet<Integer>();
+        for (int i=0;i<target.T.size();++i)
+            noImage.add(i);
+
+        Iterator<Integer> it = map.keySet().iterator();
+        while (it.hasNext()){
+            noImage.remove(map.get(it.next()));
+        }
+        return noImage.isEmpty();
+    }
+
+
 
     public static void main(String args[])
             throws java.io.IOException, java.io.FileNotFoundException {
