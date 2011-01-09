@@ -15,6 +15,8 @@ public class chronologie {
 
     private Set<int[]> relation;
     private Set<int[]> neighborhood_relation;
+    private Map<Integer, Set<Integer>> ideals; 
+    private Map<Integer, Set<Integer>> filters;
 
     public chronologie() {
         relation = new HashSet<int[]>();
@@ -64,6 +66,10 @@ public class chronologie {
         Map<Integer, Set<Integer>> filters = new HashMap<Integer, Set<Integer>>();
         Map<Integer, Set<Integer>> non_neighbors = new HashMap<Integer, Set<Integer>>();
 
+        this.ideals = new HashMap<Integer, Set<Integer>>();
+        this.filters = new HashMap<Integer, Set<Integer>>();
+
+
         Iterator<int[]> it = relation.iterator();
         while (it.hasNext()) {
             int[] pair = it.next();
@@ -101,6 +107,28 @@ public class chronologie {
         }
 
         Iterator<Integer> fit = filters.keySet().iterator();
+        while (fit.hasNext()) {
+            Integer s = fit.next();
+            this.filters.put(s, new TreeSet<Integer>());
+            Iterator<Integer> git = filters.get(s).iterator();
+            while (git.hasNext()) {
+                Integer t = git.next();
+                this.filters.get(s).add(t);
+            }
+        }
+
+        Iterator<Integer> iit = ideals.keySet().iterator();
+        while (iit.hasNext()) {
+            Integer s = iit.next();
+            this.ideals.put(s, new TreeSet<Integer>());
+            Iterator<Integer> git = ideals.get(s).iterator();
+            while (git.hasNext()) {
+                Integer t = git.next();
+                this.ideals.get(s).add(t);
+            }
+        }
+
+        fit = filters.keySet().iterator();
         while (fit.hasNext()) {
             Integer s = fit.next();
             Iterator<Integer> git = filters.get(s).iterator();
@@ -151,10 +179,16 @@ public class chronologie {
             }
         }
 
-
-
         this.neighborhood_relation = neighborhood;
         this.relation = closure;
+    }
+
+    public boolean isIsomorphic(chronologie other) {
+        if (neighborhood_relation.size()!=other.neighborhood_relation.size())
+            return false;
+
+
+        return false;
     }
 
     public static void main(String args[])
@@ -194,8 +228,13 @@ public class chronologie {
             int[] pair = it.next();
             System.out.println("("+pair[0]+", "+pair[1]+")");
         }
-        
 
+
+        System.out.println("below 0: "+c.ideals.get(0));
+        System.out.println("above 0: "+c.filters.get(0));
+
+        System.out.println("below 1: "+c.ideals.get(1));
+        System.out.println("above 1: "+c.filters.get(1));
         
     }
 
