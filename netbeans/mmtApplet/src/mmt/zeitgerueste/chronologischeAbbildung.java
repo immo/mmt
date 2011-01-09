@@ -37,19 +37,72 @@ public class chronologischeAbbildung {
 
     public boolean isSurjective() {
         Set<Integer> noImage = new TreeSet<Integer>();
-        for (int i=0;i<target.T.size();++i)
+        for (int i = 0; i < target.T.size(); ++i) {
             noImage.add(i);
+        }
 
         Iterator<Integer> it = map.keySet().iterator();
-        while (it.hasNext()){
+        while (it.hasNext()) {
             noImage.remove(map.get(it.next()));
         }
         return noImage.isEmpty();
     }
 
+    public boolean isPartialTargetOrderDefining() {
+        Map<Integer, Set<Integer>> fibers = new HashMap<Integer, Set<Integer>>();
+        Iterator<Integer> it = map.keySet().iterator();
+        while (it.hasNext()) {
+            Integer s = it.next();
+            Integer fs = map.get(s);
+            if (!fibers.containsKey(fs)) {
+                fibers.put(fs, new TreeSet<Integer>());
+            }
+            fibers.get(fs).add(s);
+        }
 
+        Map<int[], Boolean> isRectangle = new HashMap<int[], Boolean>();
+
+        it = fibers.keySet().iterator();
+
+        while (it.hasNext()){
+            Integer x = it.next();
+            Iterator<Integer> jt = fibers.keySet().iterator();
+            while (jt.hasNext()){
+                Integer y = jt.next();
+                Iterator<Integer> xinv = fibers.get(x).iterator();
+                while (xinv.hasNext()) {
+                    Integer xfinv = xinv.next();
+                    Iterator<Integer> yinv = fibers.get(y).iterator();
+                    while (yinv.hasNext()){
+                        Integer yfinv = yinv.next();
+
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
 
     public static void main(String args[])
             throws java.io.IOException, java.io.FileNotFoundException {
+        Set<Integer> mi = new TreeSet<Integer>();
+        mi.add(2);
+        mi.add(4);
+        mi.add(5);
+        Iterator<Integer> it = mi.iterator();
+        while (it.hasNext()) {
+            Integer s = it.next();
+            Iterator<Integer> jt = mi.iterator();
+            while (jt.hasNext()){
+                Integer t = jt.next();
+                System.out.println(s+", "+t);
+                if (s+t>7){
+                    it = (new TreeSet<Integer>()).iterator();
+                    jt = it;
+                }
+
+            }
+        }
     }
 }
