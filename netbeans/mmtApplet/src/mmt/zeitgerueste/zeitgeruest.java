@@ -73,11 +73,13 @@ public class zeitgeruest {
         System.out.println(z);
         chronologischeAbbildung f = new chronologischeAbbildung(z, z);
         f.map.put(0,0);
-        f.map.put(1,1);
-        f.map.put(2,2);
+        f.map.put(1,2);
+        f.map.put(2,1);
+        System.out.println(f);
         System.out.println("(s)? " + f.isSurjective() +
                     " (m)? " + f.isPartialWeaklyMonotone() +
-                    " (o)? " + f.isPartialTargetOrderDefining());
+                    " (o)? " + f.isPartialTargetOrderDefining() +
+                    " (complete)? " + f.isComplete());
         System.out.println("f.target.X.isLess(0,1) = " + f.target.X.isLess(0,1));
         System.out.println("f.source.X.isLess(0,1) = " + f.source.X.isLess(0,1));
         System.out.println("z.X.isLess(0,1) = " + z.X.isLess(0,1));

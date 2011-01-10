@@ -48,17 +48,26 @@ public class chronologischeAbbildung {
         return true;
     }
 
-    public boolean isSurjective() {
+    public boolean isComplete() {
         Set<Integer> noImage = new TreeSet<Integer>();
-        for (int i = 0; i < target.T.size(); ++i) {
+        for (int i=0; i < source.T.size(); ++i) {
             noImage.add(i);
+        }
+        noImage.removeAll(map.keySet());
+        return noImage.isEmpty();
+    }
+
+    public boolean isSurjective() {
+        Set<Integer> notAnImage = new TreeSet<Integer>();
+        for (int i = 0; i < target.T.size(); ++i) {
+            notAnImage.add(i);
         }
 
         Iterator<Integer> it = map.keySet().iterator();
         while (it.hasNext()) {
-            noImage.remove(map.get(it.next()));
+            notAnImage.remove(map.get(it.next()));
         }
-        return noImage.isEmpty();
+        return notAnImage.isEmpty();
     }
 
     public boolean isPartialTargetOrderDefining() {
@@ -121,8 +130,33 @@ public class chronologischeAbbildung {
     }
 
     public boolean isValid() {
-        return isSurjective() && isPartialWeaklyMonotone() && isPartialTargetOrderDefining();
+        return isSurjective() && isComplete() && isPartialWeaklyMonotone() && isPartialTargetOrderDefining();
     }
+
+    @Override
+    public String toString() {
+        String format = "Map from: \n" + this.source 
+                + "\n ... to :\n" + this.target + "\n ... by: \n  ";
+        Iterator<Integer> it = this.map.keySet().iterator();
+        int count = 0;
+        while (it.hasNext()) {
+            Integer s = it.next();
+            Integer t = this.map.get(s);
+            if (count > 0) {
+                if (count % 6 == 0) {
+                    format += "\n  ";
+                } else {
+                    format += "   ";
+                }
+            }
+            count ++;
+            format += s + "->" +t;
+        }
+        
+        return format;
+    }
+
+
 
     public static void main(String args[])
             throws java.io.IOException, java.io.FileNotFoundException {

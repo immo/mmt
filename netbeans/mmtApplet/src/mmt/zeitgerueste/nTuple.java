@@ -26,8 +26,6 @@ public class nTuple<T> {
         }
     }
 
-
-
     public nTuple(T x) {
         this.tuple = new ArrayList<T>();
         this.tuple.add(x);

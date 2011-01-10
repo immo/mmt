@@ -173,7 +173,7 @@ public class chronologie {
         it = closure.iterator();
         while (it.hasNext()) {
             nTuple<Integer> pair = it.next();
-            if (pair.get(0)==pair.get(1)) {
+            if (pair.get(0).equals(pair.get(1))) {
                 it.remove();
             }
         }
