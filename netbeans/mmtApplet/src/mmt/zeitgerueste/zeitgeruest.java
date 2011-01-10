@@ -21,6 +21,46 @@ public class zeitgeruest {
         X = new chronologie();
     }
 
+    public zeitgeruest(int sizeOfT) {
+        this.T = new ArrayList<traeger>();
+        for (int i =0;i<sizeOfT; ++i) {
+            this.T.add(new traeger());
+        }
+        X = new chronologie();
+    }
+
+    public zeitgeruest(Iterable annotations) {
+        this.T = new ArrayList<traeger>();
+        for (Iterator it = annotations.iterator();it.hasNext();) {
+            traeger t = new traeger();
+            t.addAnotation(it.next());
+            this.T.add(t);
+        }
+        X = new chronologie();
+    }
+
+    public zeitgeruest(Object[] annotations) {
+        this.T = new ArrayList<traeger>();
+        for (int i = 0;i<annotations.length;++i) {
+            traeger t = new traeger();
+            t.addAnotation(annotations[i]);
+            this.T.add(t);
+        }
+        X = new chronologie();
+    }
+
+    public boolean addChain(int[] chain) {
+        ArrayList<Integer> list = new ArrayList<Integer>(chain.length);
+
+        for (int i =0; i <chain.length; ++i)
+        {
+            list.add(chain[i]);
+        }
+
+        return this.X.addChain(list);
+    }
+
+
     public Set<chronologischeAbbildung> getAllMapsOnto(zeitgeruest target) {
         Set<chronologischeAbbildung> maps = new TreeSet<chronologischeAbbildung>();
         if (T.size() >= target.T.size()) {
@@ -61,32 +101,51 @@ public class zeitgeruest {
         System.out.println("test? "+ ((new int[]{1,2}) == (new int[]{1,2}))); //DAMN YOUR EYES, JAVA!
         System.out.println("equals? " + (new int[]{1,2}).equals(new int[]{1,2})); //EVEN MORE
 
-        zeitgeruest z = new zeitgeruest();
-        z.T.add(new traeger());
-        z.T.get(0).addAnotation("yellow");
-        z.T.add(new traeger());
-        z.T.get(1).addAnotation("blue");
-        z.T.add(new traeger());
-        z.T.get(2).addAnotation("green");
-        z.X.addPair(0, 1);
-        z.X.addPair(0, 2);
-        System.out.println(z);
-        chronologischeAbbildung f = new chronologischeAbbildung(z, z);
-        f.map.put(0,0);
-        f.map.put(1,2);
-        f.map.put(2,1);
-        System.out.println(f);
-        System.out.println("(s)? " + f.isSurjective() +
-                    " (m)? " + f.isPartialWeaklyMonotone() +
-                    " (o)? " + f.isPartialTargetOrderDefining() +
-                    " (complete)? " + f.isComplete());
-        System.out.println("f.target.X.isLess(0,1) = " + f.target.X.isLess(0,1));
-        System.out.println("f.source.X.isLess(0,1) = " + f.source.X.isLess(0,1));
-        System.out.println("z.X.isLess(0,1) = " + z.X.isLess(0,1));
-        System.out.println("z.X.isLowerNeighbor(0,1) = " + z.X.isLowerNeighbor(0,1));
+        zeitgeruest source = new zeitgeruest(new Object[]{"1","2","3","4"});
+        source.addChain(new int[]{0,1,2});
+
+        zeitgeruest t1 = new zeitgeruest(new Object[]{"1/2","3","4"});
+        t1.addChain(new int[]{0,1});
+        zeitgeruest t2 = new zeitgeruest(new Object[]{"1","2/3","4"});
+        t2.addChain(new int[]{0,1});
+        zeitgeruest t3 = new zeitgeruest(new Object[]{"1/2/3/4"});
+
+        zeitgeruest t4 = new zeitgeruest(new Object[]{"2","1","3","4"});
+        t4.addChain(new int[]{0,1,2});
+        zeitgeruest t5 = new zeitgeruest(new Object[]{"1","2","3","4"});
+        zeitgeruest t6 = new zeitgeruest(new Object[]{"2","3","1/4"});
+        t6.addChain(new int[]{0,1});
+        zeitgeruest t7 = new zeitgeruest(new Object[]{"1","2","3","4","_"});
+        t7.addChain(new int[]{0,1,2});
+
+        ArrayList<chronologischeAbbildung> maps = new ArrayList<chronologischeAbbildung>();
+        maps.add(new chronologischeAbbildung(source, t1));
+        maps.add(new chronologischeAbbildung(source, t2));
+        maps.add(new chronologischeAbbildung(source, t3));
+        maps.add(new chronologischeAbbildung(source, t4));
+        maps.add(new chronologischeAbbildung(source, t5));
+        maps.add(new chronologischeAbbildung(source, t6));
+        maps.add(new chronologischeAbbildung(source, t7));
+
+        maps.get(0).addMappingPairs(new int[]{0,0, 1,0, 2,1, 3,2});
+        maps.get(1).addMappingPairs(new int[]{0,0, 1,1, 2,1, 3,2});
+        maps.get(2).addMappingPairs(new int[]{0,0, 1,0, 2,0, 3,0});
+        maps.get(3).addMappingPairs(new int[]{0,1, 1,0, 2,2, 3,3});
+        maps.get(4).addMappingPairs(new int[]{0,0, 1,1, 2,2, 3,3});
+        maps.get(5).addMappingPairs(new int[]{0,2, 1,0, 2,1, 3,2});
+        maps.get(6).addMappingPairs(new int[]{0,0, 1,1, 2,2, 3,3});
 
 
-        
+        System.out.println(maps);
+
+        System.out.println("\n\n");
+        for (int i =0;i<7;++i) {
+            System.out.println("Map #"+i);
+            System.out.println("(c)? " + maps.get(i).isComplete()
+                    + " (s)? " + maps.get(i).isSurjective()
+                    + " (m)? " + maps.get(i).isPartialWeaklyMonotone()
+                    + " (o)? " + maps.get(i).isPartialTargetOrderDefining());
+        }
         
     }
 

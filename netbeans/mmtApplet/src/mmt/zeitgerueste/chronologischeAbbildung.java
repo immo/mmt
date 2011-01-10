@@ -22,6 +22,12 @@ public class chronologischeAbbildung {
         this.target = target;
         this.map = new HashMap<Integer,Integer>();
     }
+
+    public void addMappingPairs(int[] pairs) {
+        for (int i=0;i+1<pairs.length;i+=2) {
+            this.map.put(pairs[i],pairs[i+1]);
+        }
+    }
     
     public chronologischeAbbildung mapCopy() {
         chronologischeAbbildung copy = new chronologischeAbbildung(source, target);
@@ -86,8 +92,6 @@ public class chronologischeAbbildung {
 
         it = fibers.keySet().iterator();
 
-        System.out.println("fibers: " + fibers);
-
         while (it.hasNext()){
             Integer x = it.next();
             Iterator<Integer> jt = fibers.keySet().iterator();
@@ -113,13 +117,9 @@ public class chronologischeAbbildung {
 
         Iterator<nTuple<Integer>> pairs = isRectangle.keySet().iterator();
 
-        System.out.println("isRectangle: " + isRectangle);
 
         while(pairs.hasNext()){
             nTuple<Integer> pair = pairs.next();
-
-            System.out.println(pair +" = " + isRectangle.get(pair));
-            System.out.println("target.X.isLess = " + target.X.isLess(pair));
 
             if (target.X.isLess(pair)!=isRectangle.get(pair)){
                 return false;
@@ -150,7 +150,18 @@ public class chronologischeAbbildung {
                 }
             }
             count ++;
-            format += s + "->" +t;
+            String s_annotations = "";
+            String t_annotations = "";
+            if (this.source.T.get(s).annotations.size()>0) {
+                s_annotations = this.source.T.get(s).annotations.toString();
+            }
+
+            if (this.target.T.get(t).annotations.size()>0){
+                t_annotations = this.target.T.get(t).annotations.toString();
+            }
+
+
+            format += s +s_annotations + "->" +t+t_annotations;
         }
         
         return format;

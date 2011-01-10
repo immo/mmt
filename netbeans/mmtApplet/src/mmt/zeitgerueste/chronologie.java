@@ -15,7 +15,7 @@ public class chronologie {
 
     private Set<nTuple<Integer>> relation;
     private Set<nTuple<Integer>> neighborhood_relation;
-    private Map<Integer, Set<Integer>> ideals; 
+    private Map<Integer, Set<Integer>> ideals;
     private Map<Integer, Set<Integer>> filters;
 
     public chronologie() {
@@ -32,7 +32,7 @@ public class chronologie {
     }
 
     public boolean isLowerNeighbor(int x, int y) {
-        return neighborhood_relation.contains(new nTuple<Integer>(x,y));
+        return neighborhood_relation.contains(new nTuple<Integer>(x, y));
     }
 
     public boolean isLowerNeighbor(nTuple<Integer> pair) {
@@ -71,6 +71,47 @@ public class chronologie {
         return true;
     }
 
+    public boolean addChain(Iterable<Integer> chain) {
+        boolean calculateClosure = false;
+        Iterator<Integer> it = chain.iterator();
+        if (it.hasNext()) {
+            int x = it.next();
+            while (it.hasNext()) {
+                int y = it.next();
+                if ((x != y) && (!isLess(x, y))) {
+                    calculateClosure = true;
+                    neighborhood_relation.add(new nTuple<Integer>(x, y));
+                }
+                x = y;
+            }
+        }
+        if (calculateClosure) {
+            relation = neighborhood_relation;
+            closeRelation();
+        }
+        return calculateClosure;
+    }
+
+    public boolean addPairs(Set<nTuple<Integer>> pairs) {
+        boolean calculateClosure = false;
+        Iterator<nTuple<Integer>> it = pairs.iterator();
+        while (it.hasNext()) {
+            nTuple<Integer> pair = it.next();
+            int x = pair.get(0);
+            int y = pair.get(1);
+            if ((x != y) && (!isLess(x, y))) {
+                calculateClosure = true;
+                neighborhood_relation.add(pair);
+            }
+        }
+        if (calculateClosure) {
+            relation = neighborhood_relation;
+            closeRelation();
+        }
+
+        return calculateClosure;
+    }
+
     public boolean removePair(int x, int y) {
         if (!isLess(x, y)) {
             return false;
@@ -82,7 +123,7 @@ public class chronologie {
             int s = pair.get(0);
             int t = pair.get(1);
 
-            if ((t == y) && isLess(x, s))  {
+            if ((t == y) && isLess(x, s)) {
                 it.remove();
             }
         }
@@ -215,21 +256,18 @@ public class chronologie {
         this.relation = closure;
     }
 
-
-
     public static void main(String args[])
-	throws java.io.IOException, java.io.FileNotFoundException
-    {
+            throws java.io.IOException, java.io.FileNotFoundException {
         System.out.println("Testing chronology class...");
 
         chronologie c = new chronologie();
-        c.addPair(0,1);
-        c.addPair(1,2);
-        c.addPair(0,3);
-        c.addPair(0,4);
-        c.addPair(-2,-1);
+        c.addPair(0, 1);
+        c.addPair(1, 2);
+        c.addPair(0, 3);
+        c.addPair(0, 4);
+        c.addPair(-2, -1);
         c.addPair(-4, -1);
-        c.addPair(-1,1);
+        c.addPair(-1, 1);
 
         System.out.println("Relation pairs:");
         Iterator<nTuple<Integer>> it = c.relation.iterator();
@@ -246,7 +284,7 @@ public class chronologie {
         }
 
         System.out.println("Adding (-4,-2)...");
-        c.addPair(-4,-2);
+        c.addPair(-4, -2);
 
         System.out.println("Neighbor pairs:");
         it = c.neighborhood_relation.iterator();
@@ -256,12 +294,11 @@ public class chronologie {
         }
 
 
-        System.out.println("below 0: "+c.ideals.get(0));
-        System.out.println("above 0: "+c.filters.get(0));
+        System.out.println("below 0: " + c.ideals.get(0));
+        System.out.println("above 0: " + c.filters.get(0));
 
-        System.out.println("below 1: "+c.ideals.get(1));
-        System.out.println("above 1: "+c.filters.get(1));
-        
+        System.out.println("below 1: " + c.ideals.get(1));
+        System.out.println("above 1: " + c.filters.get(1));
+
     }
-
 }

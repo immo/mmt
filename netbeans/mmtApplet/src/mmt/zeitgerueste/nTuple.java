@@ -22,7 +22,7 @@ public class nTuple<T> {
     public nTuple(T[] tuple) {
         this.tuple = new ArrayList<T>(tuple.length);
         for (int i=0;i<tuple.length;++i) {
-            this.tuple.set(i, tuple[i]);
+            this.tuple.add(tuple[i]);
         }
     }
 
