@@ -20,6 +20,7 @@ public class chronologischeAbbildung {
     public chronologischeAbbildung(zeitgeruest source, zeitgeruest target) {
         this.source = source;
         this.target = target;
+        this.map = new HashMap<Integer,Integer>();
     }
     
     public chronologischeAbbildung mapCopy() {
@@ -30,11 +31,11 @@ public class chronologischeAbbildung {
     }
 
     public boolean isPartialWeaklyMonotone() {
-        Iterator<int[]> it = source.X.getNeighbors().iterator();
+        Iterator<nTuple<Integer>> it = source.X.getNeighbors().iterator();
         while (it.hasNext()) {
-            int[] pair = it.next();
-            int s = pair[0];
-            int t = pair[1];
+            nTuple<Integer> pair = it.next();
+            int s = pair.get(0);
+            int t = pair.get(1);
 
             if (map.containsKey(s) && map.containsKey(t)) {
                 if (map.get(s) != map.get(t)) {
@@ -72,9 +73,11 @@ public class chronologischeAbbildung {
             fibers.get(fs).add(s);
         }
 
-        Map<int[], Boolean> isRectangle = new HashMap<int[], Boolean>();
+        Map<nTuple<Integer>, Boolean> isRectangle = new HashMap<nTuple<Integer>, Boolean>();
 
         it = fibers.keySet().iterator();
+
+        System.out.println("fibers: " + fibers);
 
         while (it.hasNext()){
             Integer x = it.next();
@@ -95,16 +98,21 @@ public class chronologischeAbbildung {
                         }
                     }
                 }
-                isRectangle.put(new int[]{x,y}, !counterExample);
+                isRectangle.put(new nTuple<Integer>(x,y), !counterExample);
             }
         }
 
-        Iterator<int[]> pairs = isRectangle.keySet().iterator();
+        Iterator<nTuple<Integer>> pairs = isRectangle.keySet().iterator();
+
+        System.out.println("isRectangle: " + isRectangle);
 
         while(pairs.hasNext()){
-            int[] pair = pairs.next();
+            nTuple<Integer> pair = pairs.next();
 
-            if (target.X.isLess(pair[0], pair[1])!=isRectangle.get(pair)){
+            System.out.println(pair +" = " + isRectangle.get(pair));
+            System.out.println("target.X.isLess = " + target.X.isLess(pair));
+
+            if (target.X.isLess(pair)!=isRectangle.get(pair)){
                 return false;
             }
         }

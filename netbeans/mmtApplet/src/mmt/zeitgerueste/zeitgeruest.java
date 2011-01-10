@@ -39,9 +39,9 @@ public class zeitgeruest {
         }
         rep += "Neighbors: \n";
         int count = 0;
-        Iterator<int[]> it = X.getNeighbors().iterator();
+        Iterator<nTuple<Integer>> it = X.getNeighbors().iterator();
         while (it.hasNext()){
-            int[] pair = it.next();
+            nTuple<Integer> pair = it.next();
             if (count > 0)
             {
                 if (count % 6 == 0) {
@@ -51,13 +51,16 @@ public class zeitgeruest {
                 }
             }
             count ++;
-            rep += pair[0]+"->"+pair[1];
+            rep += pair.get(0)+"->"+pair.get(1);
         }
         return rep;
     }
     public static void main(String args[])
 	throws java.io.IOException, java.io.FileNotFoundException
     {
+        System.out.println("test? "+ ((new int[]{1,2}) == (new int[]{1,2}))); //DAMN YOUR EYES, JAVA!
+        System.out.println("equals? " + (new int[]{1,2}).equals(new int[]{1,2})); //EVEN MORE
+
         zeitgeruest z = new zeitgeruest();
         z.T.add(new traeger());
         z.T.get(0).addAnotation("yellow");
@@ -66,7 +69,23 @@ public class zeitgeruest {
         z.T.add(new traeger());
         z.T.get(2).addAnotation("green");
         z.X.addPair(0, 1);
+        z.X.addPair(0, 2);
         System.out.println(z);
+        chronologischeAbbildung f = new chronologischeAbbildung(z, z);
+        f.map.put(0,0);
+        f.map.put(1,1);
+        f.map.put(2,2);
+        System.out.println("(s)? " + f.isSurjective() +
+                    " (m)? " + f.isPartialWeaklyMonotone() +
+                    " (o)? " + f.isPartialTargetOrderDefining());
+        System.out.println("f.target.X.isLess(0,1) = " + f.target.X.isLess(0,1));
+        System.out.println("f.source.X.isLess(0,1) = " + f.source.X.isLess(0,1));
+        System.out.println("z.X.isLess(0,1) = " + z.X.isLess(0,1));
+        System.out.println("z.X.isLowerNeighbor(0,1) = " + z.X.isLowerNeighbor(0,1));
+
+
+        
+        
     }
 
 }

@@ -13,22 +13,30 @@ import java.io.*;
  */
 public class chronologie {
 
-    private Set<int[]> relation;
-    private Set<int[]> neighborhood_relation;
+    private Set<nTuple<Integer>> relation;
+    private Set<nTuple<Integer>> neighborhood_relation;
     private Map<Integer, Set<Integer>> ideals; 
     private Map<Integer, Set<Integer>> filters;
 
     public chronologie() {
-        relation = new HashSet<int[]>();
-        neighborhood_relation = new HashSet<int[]>();
+        relation = new HashSet<nTuple<Integer>>();
+        neighborhood_relation = new HashSet<nTuple<Integer>>();
     }
 
     public boolean isLess(int x, int y) {
-        return relation.contains(new int[]{x, y});
+        return relation.contains(new nTuple<Integer>(x, y));
+    }
+
+    public boolean isLess(nTuple<Integer> pair) {
+        return relation.contains(pair);
     }
 
     public boolean isLowerNeighbor(int x, int y) {
-        return neighborhood_relation.contains(new int[]{x,y});
+        return neighborhood_relation.contains(new nTuple<Integer>(x,y));
+    }
+
+    public boolean isLowerNeighbor(nTuple<Integer> pair) {
+        return neighborhood_relation.contains(pair);
     }
 
     public Set<Integer> getFilter(int x) {
@@ -47,7 +55,7 @@ public class chronologie {
         return this.ideals.get(x);
     }
 
-    public Set<int[]> getNeighbors() {
+    public Set<nTuple<Integer>> getNeighbors() {
         return this.neighborhood_relation;
     }
 
@@ -57,7 +65,7 @@ public class chronologie {
         }
         if (!isLess(x, y)) {
             relation = neighborhood_relation;
-            relation.add(new int[]{x, y});
+            relation.add(new nTuple<Integer>(x, y));
             closeRelation();
         }
         return true;
@@ -68,11 +76,11 @@ public class chronologie {
             return false;
         }
 
-        Iterator<int[]> it = neighborhood_relation.iterator();
+        Iterator<nTuple<Integer>> it = neighborhood_relation.iterator();
         while (it.hasNext()) {
-            int[] pair = it.next();
-            int s = pair[0];
-            int t = pair[1];
+            nTuple<Integer> pair = it.next();
+            int s = pair.get(0);
+            int t = pair.get(1);
 
             if ((t == y) && isLess(x, s))  {
                 it.remove();
@@ -84,8 +92,8 @@ public class chronologie {
     }
 
     public void closeRelation() {
-        Set<int[]> closure = new HashSet<int[]>();
-        Set<int[]> neighborhood = new HashSet<int[]>();
+        Set<nTuple<Integer>> closure = new HashSet<nTuple<Integer>>();
+        Set<nTuple<Integer>> neighborhood = new HashSet<nTuple<Integer>>();
         Map<Integer, Set<Integer>> ideals = new HashMap<Integer, Set<Integer>>();
         Map<Integer, Set<Integer>> filters = new HashMap<Integer, Set<Integer>>();
         Map<Integer, Set<Integer>> non_neighbors = new HashMap<Integer, Set<Integer>>();
@@ -94,11 +102,11 @@ public class chronologie {
         this.filters = new HashMap<Integer, Set<Integer>>();
 
 
-        Iterator<int[]> it = relation.iterator();
+        Iterator<nTuple<Integer>> it = relation.iterator();
         while (it.hasNext()) {
-            int[] pair = it.next();
-            int s = pair[0];
-            int t = pair[1];
+            nTuple<Integer> pair = it.next();
+            int s = pair.get(0);
+            int t = pair.get(1);
             if (!filters.containsKey(t)) {
                 filters.put(t, new TreeSet<Integer>());
                 filters.get(t).add(t);
@@ -158,14 +166,14 @@ public class chronologie {
             Iterator<Integer> git = filters.get(s).iterator();
             while (git.hasNext()) {
                 Integer t = git.next();
-                closure.add(new int[]{s, t});                
+                closure.add(new nTuple<Integer>(s, t));
             }
         }
 
         it = closure.iterator();
         while (it.hasNext()) {
-            int[] pair = it.next();
-            if (pair[0]==pair[1]) {
+            nTuple<Integer> pair = it.next();
+            if (pair.get(0)==pair.get(1)) {
                 it.remove();
             }
         }
@@ -199,7 +207,7 @@ public class chronologie {
             Iterator<Integer> git = filters.get(s).iterator();
             while (git.hasNext()) {
                 Integer t = git.next();
-                neighborhood.add(new int[]{s, t});
+                neighborhood.add(new nTuple<Integer>(s, t));
             }
         }
 
@@ -224,17 +232,17 @@ public class chronologie {
         c.addPair(-1,1);
 
         System.out.println("Relation pairs:");
-        Iterator<int[]> it = c.relation.iterator();
+        Iterator<nTuple<Integer>> it = c.relation.iterator();
         while (it.hasNext()) {
-            int[] pair = it.next();
-            System.out.println("("+pair[0]+", "+pair[1]+")");
+            nTuple<Integer> pair = it.next();
+            System.out.println(pair);
         }
 
         System.out.println("Neighbor pairs:");
         it = c.neighborhood_relation.iterator();
         while (it.hasNext()) {
-            int[] pair = it.next();
-            System.out.println("("+pair[0]+", "+pair[1]+")");
+            nTuple<Integer> pair = it.next();
+            System.out.println(pair);
         }
 
         System.out.println("Adding (-4,-2)...");
@@ -243,8 +251,8 @@ public class chronologie {
         System.out.println("Neighbor pairs:");
         it = c.neighborhood_relation.iterator();
         while (it.hasNext()) {
-            int[] pair = it.next();
-            System.out.println("("+pair[0]+", "+pair[1]+")");
+            nTuple<Integer> pair = it.next();
+            System.out.println(pair);
         }
 
 
