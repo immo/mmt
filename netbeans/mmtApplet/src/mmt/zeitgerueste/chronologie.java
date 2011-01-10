@@ -17,10 +17,20 @@ public class chronologie {
     private Set<nTuple<Integer>> neighborhood_relation;
     private Map<Integer, Set<Integer>> ideals;
     private Map<Integer, Set<Integer>> filters;
+    private Map<nTuple<Integer>,Integer> longest_up_path;
 
     public chronologie() {
         relation = new HashSet<nTuple<Integer>>();
-        neighborhood_relation = new HashSet<nTuple<Integer>>();
+        
+        closeRelation();
+    }
+
+    public Integer getLongestUpPathLength(int x, int y) {
+        nTuple<Integer> t = new nTuple<Integer>(x,y);
+        if (longest_up_path.containsKey(t)){
+            return longest_up_path.get(t);
+        }
+        return 0;
     }
 
     public boolean isLess(int x, int y) {
@@ -254,6 +264,45 @@ public class chronologie {
 
         this.neighborhood_relation = neighborhood;
         this.relation = closure;
+        
+        this.longest_up_path = new HashMap<nTuple<Integer>,Integer>();
+
+        Iterator<Integer> sit = this.filters.keySet().iterator();
+        while (sit.hasNext()){
+            Integer s = sit.next();
+            Iterator<Integer> tit = this.filters.get(s).iterator();
+            while (tit.hasNext()) {
+                Integer t = tit.next();
+                if (!s.equals(t)) {
+                    this.longest_up_path.put(new nTuple<Integer>(s,t), 1);
+                }
+            }
+        }
+
+        boolean checkAgain = true;
+
+        while (checkAgain) {
+            checkAgain = false;
+            sit = this.filters.keySet().iterator();
+            while (sit.hasNext()){
+                Integer s = sit.next();
+                Set<Integer> sf = this.filters.get(s);
+                Iterator<nTuple<Integer>> current = this.longest_up_path.keySet().iterator();
+                while (current.hasNext()) {
+                    nTuple<Integer> pair = current.next();
+                    if ((pair.get(0)!=s) && sf.contains(pair.get(0))) {
+                        Integer lengthVia = 1 + this.longest_up_path.get(pair);
+                        nTuple<Integer> via = new nTuple<Integer>(s,pair.get(1));
+                        if (lengthVia > this.longest_up_path.get(via)) {
+                            this.longest_up_path.put(via,lengthVia);
+                            checkAgain = true;
+                            
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     public static void main(String args[])
@@ -299,6 +348,8 @@ public class chronologie {
 
         System.out.println("below 1: " + c.ideals.get(1));
         System.out.println("above 1: " + c.filters.get(1));
+
+        System.out.println("Up-path lengths: " + c.longest_up_path);
 
     }
 }
