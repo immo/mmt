@@ -31,7 +31,7 @@ public class chronologischeAbbildung {
     
     public chronologischeAbbildung mapCopy() {
         chronologischeAbbildung copy = new chronologischeAbbildung(source, target);
-        copy.map = new HashMap<Integer, Integer>();
+        
         copy.map.putAll(this.map);
         return copy;
     }
@@ -74,6 +74,16 @@ public class chronologischeAbbildung {
             notAnImage.remove(map.get(it.next()));
         }
         return notAnImage.isEmpty();
+    }
+
+    public boolean isInjective() {
+        Set<Integer> images = new TreeSet<Integer>();
+
+        Iterator<Integer> it = map.keySet().iterator();
+        while (it.hasNext()){
+            images.add(map.get(it.next()));
+        }
+        return map.keySet().size()==images.size();
     }
 
     public boolean isPartialTargetOrderDefining() {
@@ -166,7 +176,7 @@ public class chronologischeAbbildung {
         
         return format;
     }
-
+    
 
 
     public static void main(String args[])

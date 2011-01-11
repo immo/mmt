@@ -65,7 +65,15 @@ public class zeitgeruest {
         Set<chronologischeAbbildung> maps = new TreeSet<chronologischeAbbildung>();
         if (T.size() >= target.T.size()) {
             chronologischeAbbildung current_map = new chronologischeAbbildung(this, target);
+            
+            /* Idea: take a partial but surjective map and fill out the free spots */
 
+            ArrayList<Set<Integer>> checked_possibilities = new ArrayList<Set<Integer>>();
+            for (int i=0;i<target.T.size();++i) {
+                checked_possibilities.add(new TreeSet<Integer>());
+            }
+
+            
         }
         return maps;
     }
@@ -146,6 +154,9 @@ public class zeitgeruest {
                     + " (m)? " + maps.get(i).isPartialWeaklyMonotone()
                     + " (o)? " + maps.get(i).isPartialTargetOrderDefining());
         }
+
+        System.out.println("Maps between source and t1:");
+        System.out.println(source.getAllMapsOnto(t1));
         
     }
 
