@@ -54,6 +54,33 @@ public class chronologischeAbbildung {
         return true;
     }
 
+    public boolean isPartialWeaklyMonotone(Integer onlyThisPreimage) {
+        Iterator<nTuple<Integer>> it = source.X.getNeighbors().iterator();
+        while (it.hasNext()) {
+            nTuple<Integer> pair = it.next();
+            int s = pair.get(0);
+            int t = pair.get(1);
+
+            if ((onlyThisPreimage.equals(s)||onlyThisPreimage.equals(t))
+                    &&map.containsKey(s) && map.containsKey(t)) {
+                if (map.get(s) != map.get(t)) {
+                    if (!target.X.isLess(map.get(s), map.get(t))) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean isPartialGoodChoiceForSurjectivity(Integer onlyThisPreimage) {
+        Integer image = map.get(onlyThisPreimage);
+        Set<Integer> filter = target.X.getFilter(image);
+        Set<Integer> ideal = target.X.getIdeal(image);
+        
+        return true;
+    }
+
     public boolean isComplete() {
         Set<Integer> noImage = new TreeSet<Integer>();
         for (int i=0; i < source.T.size(); ++i) {
