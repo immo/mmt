@@ -17,17 +17,19 @@ public class chronologie {
     private Set<nTuple<Integer>> neighborhood_relation;
     private Map<Integer, Set<Integer>> ideals;
     private Map<Integer, Set<Integer>> filters;
-    private Map<nTuple<Integer>,Integer> longest_up_path;
+    private Map<Integer, Set<Integer>> upper_neighbors;
+    private Map<Integer, Set<Integer>> lower_neighbors;
+    private Map<nTuple<Integer>, Integer> longest_up_path;
 
     public chronologie() {
         relation = new HashSet<nTuple<Integer>>();
-        
+
         closeRelation();
     }
 
     public Integer getLongestUpPathLength(int x, int y) {
-        nTuple<Integer> t = new nTuple<Integer>(x,y);
-        if (longest_up_path.containsKey(t)){
+        nTuple<Integer> t = new nTuple<Integer>(x, y);
+        if (longest_up_path.containsKey(t)) {
             return longest_up_path.get(t);
         }
         return 0;
@@ -67,6 +69,22 @@ public class chronologie {
 
     public Set<nTuple<Integer>> getNeighbors() {
         return this.neighborhood_relation;
+    }
+
+    public Set<Integer> getUpperNeighbors(int x) {
+        if (this.upper_neighbors.containsKey(x)) {
+            return this.upper_neighbors.get(x);
+        } else {
+            return new TreeSet<Integer>();
+        }
+    }
+
+    public Set<Integer> getLowerNeighbors(int x) {
+        if (this.lower_neighbors.containsKey(x)) {
+            return this.lower_neighbors.get(x);
+        } else {
+            return new TreeSet<Integer>();
+        }
     }
 
     public boolean addPair(int x, int y) {
@@ -252,29 +270,41 @@ public class chronologie {
             filters.get(s).removeAll(non_neighbors.get(s));
         }
 
+        this.lower_neighbors = new HashMap<Integer, Set<Integer>>();
+
         fit = filters.keySet().iterator();
         while (fit.hasNext()) {
             Integer s = fit.next();
+            this.lower_neighbors.put(s, new TreeSet<Integer>());
+        }
+
+        fit = filters.keySet().iterator();
+        while (fit.hasNext()) {
+            Integer s = fit.next();
+
             Iterator<Integer> git = filters.get(s).iterator();
             while (git.hasNext()) {
                 Integer t = git.next();
                 neighborhood.add(new nTuple<Integer>(s, t));
+                this.lower_neighbors.get(t).add(s);
             }
         }
 
+        this.upper_neighbors = filters;
+
         this.neighborhood_relation = neighborhood;
         this.relation = closure;
-        
-        this.longest_up_path = new HashMap<nTuple<Integer>,Integer>();
+
+        this.longest_up_path = new HashMap<nTuple<Integer>, Integer>();
 
         Iterator<Integer> sit = this.filters.keySet().iterator();
-        while (sit.hasNext()){
+        while (sit.hasNext()) {
             Integer s = sit.next();
             Iterator<Integer> tit = this.filters.get(s).iterator();
             while (tit.hasNext()) {
                 Integer t = tit.next();
                 if (!s.equals(t)) {
-                    this.longest_up_path.put(new nTuple<Integer>(s,t), 1);
+                    this.longest_up_path.put(new nTuple<Integer>(s, t), 1);
                 }
             }
         }
@@ -284,19 +314,19 @@ public class chronologie {
         while (checkAgain) {
             checkAgain = false;
             sit = this.filters.keySet().iterator();
-            while (sit.hasNext()){
+            while (sit.hasNext()) {
                 Integer s = sit.next();
                 Set<Integer> sf = this.filters.get(s);
                 Iterator<nTuple<Integer>> current = this.longest_up_path.keySet().iterator();
                 while (current.hasNext()) {
                     nTuple<Integer> pair = current.next();
-                    if ((pair.get(0)!=s) && sf.contains(pair.get(0))) {
+                    if ((pair.get(0) != s) && sf.contains(pair.get(0))) {
                         Integer lengthVia = 1 + this.longest_up_path.get(pair);
-                        nTuple<Integer> via = new nTuple<Integer>(s,pair.get(1));
+                        nTuple<Integer> via = new nTuple<Integer>(s, pair.get(1));
                         if (lengthVia > this.longest_up_path.get(via)) {
-                            this.longest_up_path.put(via,lengthVia);
+                            this.longest_up_path.put(via, lengthVia);
                             checkAgain = true;
-                            
+
                         }
                     }
                 }
@@ -350,6 +380,10 @@ public class chronologie {
         System.out.println("above 1: " + c.filters.get(1));
 
         System.out.println("Up-path lengths: " + c.longest_up_path);
+        System.out.println("lower: " + c.lower_neighbors);
+        System.out.println("upper: " + c.upper_neighbors);
+        System.out.println("upper-neighbors of 0: " + c.getUpperNeighbors(0));
+        System.out.println("lower-neighbors of 3: " + c.getLowerNeighbors(3));
 
     }
 }

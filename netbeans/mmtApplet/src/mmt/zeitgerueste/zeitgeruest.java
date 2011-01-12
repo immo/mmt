@@ -98,8 +98,11 @@ public class zeitgeruest {
 
                             current_placement.set(recursion_depth, preimage);
                             current_map.map.put(preimage, recursion_depth);
-                            //check whether this is a good choice, i.e. a order compatible
-                            if (current_map.isPartialWeaklyMonotone(preimage)) {
+
+                            //check whether this is a good choice, i.e. a order compatible, etc.
+                            
+                            if (current_map.isPartialWeaklyMonotone(preimage)
+                                    && current_map.isPartialGoodChoiceForSurjectivity(preimage)) {
                                 //go deeper one level
                                 recursion_depth++;
 
@@ -110,8 +113,9 @@ public class zeitgeruest {
                                 }
                                 break;
                             } else {
-                                System.out.println("Not monotone at "+recursion_depth);
-                                //not monotone, remove this part, no descend
+
+                                //not monotone or bad choic, remove this part, no descend
+
                                 current_map.map.remove(preimage);
                             }
                         }
@@ -216,7 +220,7 @@ public class zeitgeruest {
         while (mit.hasNext()) {
             System.out.println(mit.next().isPartialWeaklyMonotone());
         }
-        
+
 
     }
 }
