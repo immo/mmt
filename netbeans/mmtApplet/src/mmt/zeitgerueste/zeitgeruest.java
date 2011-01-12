@@ -59,6 +59,16 @@ public class zeitgeruest {
         return this.X.addChain(list);
     }
 
+    public boolean addPairs(int[] inline_pairs) {
+        Set<nTuple<Integer>> pairs = new HashSet<nTuple<Integer>>();
+
+        for (int i = 0; i < inline_pairs.length; i+=2) {
+            pairs.add(new nTuple<Integer>(inline_pairs[i],inline_pairs[i+1]));
+        }
+
+        return this.X.addPairs(pairs);
+    }
+
     public Set<chronologischeAbbildung> getAllMapsOnto(zeitgeruest target) {
         Set<chronologischeAbbildung> partial_maps = new HashSet<chronologischeAbbildung>();
 
@@ -152,8 +162,6 @@ public class zeitgeruest {
             return partial_maps;
         }
 
-
-
         /* since (s) is already fulfilled, we choose the rest of the mapping
          * such that it is compatible with (m) and finally we check whether
          * (o) holds.
@@ -172,6 +180,38 @@ public class zeitgeruest {
             }
             System.out.println(current_placement);
             boolean step_back = false;
+
+            while (recursion_depth >= 0) {
+                int preimage = free_elements.get(recursion_depth);
+                for (int image = current_placement.get(recursion_depth);
+                        image < codomain_size + 1;
+                        ++image) {
+                    if (image == codomain_size) {
+                        step_back = true;
+                    } else {
+                        partial.map.put(preimage, image);
+                        if (partial.isPartialWeaklyMonotone(preimage)) {
+                            recursion_depth++;
+                            if (recursion_depth == free_count) {
+                                if (partial.isPartialTargetOrderDefining()) {
+                                    maps.add(partial.mapCopy());
+                                }
+                                recursion_depth--;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (step_back) {
+                    if (recursion_depth > 0) {
+                        
+                        current_placement.set(recursion_depth, 0);
+                    }
+                    recursion_depth--;
+                    step_back = false;
+                }
+            }
 
 
         }
@@ -259,13 +299,18 @@ public class zeitgeruest {
         System.out.println(allMaps.size());
         Iterator<chronologischeAbbildung> mit = allMaps.iterator();
         while (mit.hasNext()) {
-            System.out.println(mit.next().isPartialWeaklyMonotone());
+            System.out.println(mit.next().isValid());
         }
+        System.out.println(allMaps);
+        
+        zeitgeruest two_plus_two = new zeitgeruest(new Object[]{"1", "2", "j", "k"});
+        two_plus_two.addPairs(new int[]{0,1, 2,3});
+        System.out.println(two_plus_two);
 
-        System.out.println("Maps between source and source:");
-        System.out.println(t5.getAllMapsOnto(t5));
+        allMaps = two_plus_two.getAllMapsOnto(two_plus_two);
+        System.out.println("Endomorphisms:"+allMaps.size());
+        System.out.println(allMaps);
 
-        System.out.println(source.X.getLongestUpPathLength(0, 1));
 
 
     }
