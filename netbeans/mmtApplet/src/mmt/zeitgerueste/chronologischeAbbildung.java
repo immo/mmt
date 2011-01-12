@@ -74,6 +74,7 @@ public class chronologischeAbbildung {
     }
 
     public boolean isPartialGoodChoiceForSurjectivity(Integer onlyThisPreimage) {
+        /* this property is utilizing the fact that we want mappings with (s) and (o) */
         Integer image = map.get(onlyThisPreimage);
         Set<Integer> filter = target.X.getFilter(image);
         Set<Integer> ideal = target.X.getIdeal(image);
@@ -185,6 +186,16 @@ public class chronologischeAbbildung {
 
     public boolean isValid() {
         return isSurjective() && isComplete() && isPartialWeaklyMonotone() && isPartialTargetOrderDefining();
+    }
+
+    public ArrayList<Integer> freeDomainElements() {
+        ArrayList<Integer> elements = new ArrayList<Integer>();
+        for (int i=0;i<source.T.size();++i) {
+            if (!map.containsKey(i)) {
+                elements.add(i);
+            }
+        }
+        return elements;
     }
 
     @Override

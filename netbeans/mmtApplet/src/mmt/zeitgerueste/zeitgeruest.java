@@ -60,13 +60,14 @@ public class zeitgeruest {
     }
 
     public Set<chronologischeAbbildung> getAllMapsOnto(zeitgeruest target) {
-        Set<chronologischeAbbildung> maps = new HashSet<chronologischeAbbildung>();
+        Set<chronologischeAbbildung> partial_maps = new HashSet<chronologischeAbbildung>();
+
         if (T.size() >= target.T.size()) {
             chronologischeAbbildung current_map = new chronologischeAbbildung(this, target);
 
             /* Idea: take a partial but surjective map and fill out the free spots */
 
-            ArrayList<Integer> current_placement = new ArrayList<Integer>();
+            ArrayList<Integer> current_placement = new ArrayList<Integer>(T.size());
             Set<Integer> taken_images = new TreeSet<Integer>();
             for (int i = 0; i < target.T.size(); ++i) {
                 current_placement.add(0);
@@ -100,7 +101,7 @@ public class zeitgeruest {
                             current_map.map.put(preimage, recursion_depth);
 
                             //check whether this is a good choice, i.e. a order compatible, etc.
-                            
+
                             if (current_map.isPartialWeaklyMonotone(preimage)
                                     && current_map.isPartialGoodChoiceForSurjectivity(preimage)) {
                                 //go deeper one level
@@ -108,13 +109,13 @@ public class zeitgeruest {
 
                                 if (recursion_depth == codomain_size) {
                                     //this is the last level of recursion
-                                    maps.add(current_map.mapCopy());
+                                    partial_maps.add(current_map.mapCopy());
                                     step_back = true;
                                 }
                                 break;
                             } else {
 
-                                //not monotone or bad choic, remove this part, no descend
+                                //not monotone or bad choice, remove this part, no descend
 
                                 current_map.map.remove(preimage);
                             }
@@ -135,6 +136,46 @@ public class zeitgeruest {
                 }
             }
         }
+
+        Set<chronologischeAbbildung> maps = new HashSet<chronologischeAbbildung>();
+
+        if (T.size() == target.T.size()) {
+            /* (o) is automatically fulfilled because of the good choice property
+             * (Proof!?!?!) [the longest paths between neighbors always equals 1
+             * and since the longest path length between the target supporters
+             * has to be less or equal the path lengths between the preimage
+             * supporters, fx < fy requires x < y, the other direction is by (m)
+             * given, such that x < y requires fx < fy and also by surjectivity,
+             * finiteness and equal cardinality of the supporter sets we have that
+             * (o) already holds.
+             */
+            return partial_maps;
+        }
+
+
+
+        /* since (s) is already fulfilled, we choose the rest of the mapping
+         * such that it is compatible with (m) and finally we check whether
+         * (o) holds.
+         */
+
+        Iterator<chronologischeAbbildung> it = partial_maps.iterator();
+        while (it.hasNext()) {
+            chronologischeAbbildung partial = it.next();
+            ArrayList<Integer> free_elements = partial.freeDomainElements();
+            int free_count = free_elements.size();
+            int recursion_depth = 0;
+            int codomain_size = target.T.size();
+            ArrayList<Integer> current_placement = new ArrayList<Integer>(free_count);
+            for (int i = 0; i < free_count; ++i) {
+                current_placement.add(0);
+            }
+            System.out.println(current_placement);
+            boolean step_back = false;
+
+
+        }
+
         return maps;
     }
 
@@ -220,6 +261,11 @@ public class zeitgeruest {
         while (mit.hasNext()) {
             System.out.println(mit.next().isPartialWeaklyMonotone());
         }
+
+        System.out.println("Maps between source and source:");
+        System.out.println(t5.getAllMapsOnto(t5));
+
+        System.out.println(source.X.getLongestUpPathLength(0, 1));
 
 
     }
