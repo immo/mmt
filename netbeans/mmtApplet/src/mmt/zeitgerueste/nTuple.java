@@ -6,6 +6,9 @@ package mmt.zeitgerueste;
 
 import java.util.*;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.lang.reflect.*;
 
 /**
  *
@@ -24,6 +27,37 @@ public class nTuple<T> {
         for (int i=0;i<tuple.length;++i) {
             this.tuple.add(tuple[i]);
         }
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        nTuple<T> obj=null;
+        try {
+            Constructor c = this.getClass().getConstructor(new Class[]{});
+            try {
+                obj = (nTuple<T>) c.newInstance();
+            } catch (InstantiationException ex) {
+                Logger.getLogger(nTuple.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(nTuple.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalArgumentException ex) {
+                Logger.getLogger(nTuple.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InvocationTargetException ex) {
+                Logger.getLogger(nTuple.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (NoSuchMethodException ex) {
+            Logger.getLogger(nTuple.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SecurityException ex) {
+            Logger.getLogger(nTuple.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        obj.tuple = (ArrayList<T>)this.tuple.clone();
+        return obj;
+    }
+
+
+    public nTuple() {
+        this.tuple = new ArrayList<T>();
+
     }
 
     public nTuple(T x) {
@@ -134,6 +168,16 @@ public class nTuple<T> {
         System.out.println(tupleSet);
         System.out.println(tupleSet.contains(t));
         System.out.println(tupleSet.contains(v2));
+        try {
+            System.out.println(t.clone());
+            nTuple<nTuple<Integer>> degree = new nTuple<nTuple<Integer>>(t,v);
+            nTuple<nTuple<Integer>> degree2 = (nTuple<nTuple<Integer>>) degree.clone();
+            System.out.println("deep cloning? " + (degree2.get(0)==degree.get(0)));
+            System.out.println(degree + " = " + degree2);
+        } catch (CloneNotSupportedException ex) {
+            Logger.getLogger(nTuple.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         
     }
 }

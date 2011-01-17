@@ -6,6 +6,8 @@ package mmt.zeitgerueste;
 
 import java.util.*;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -49,6 +51,16 @@ public class zeitgeruest {
         X = new chronologie();
     }
 
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        zeitgeruest c = new zeitgeruest(T.size());
+        c.X = (chronologie) this.X.clone();
+        
+        return c;
+    }
+
+
+
     public boolean addChain(int[] chain) {
         ArrayList<Integer> list = new ArrayList<Integer>(chain.length);
 
@@ -62,15 +74,15 @@ public class zeitgeruest {
     public boolean addPairs(int[] inline_pairs) {
         Set<nTuple<Integer>> pairs = new HashSet<nTuple<Integer>>();
 
-        for (int i = 0; i < inline_pairs.length; i+=2) {
-            pairs.add(new nTuple<Integer>(inline_pairs[i],inline_pairs[i+1]));
+        for (int i = 0; i < inline_pairs.length; i += 2) {
+            pairs.add(new nTuple<Integer>(inline_pairs[i], inline_pairs[i + 1]));
         }
 
         return this.X.addPairs(pairs);
     }
 
     public boolean isIsomorphicTo(zeitgeruest target) {
-        if (T.size()!=target.T.size()) {
+        if (T.size() != target.T.size()) {
             return false;
         }
         Set<chronologischeAbbildung> iso = getOneMapOnto(target);
@@ -85,14 +97,44 @@ public class zeitgeruest {
         return getAllMapsOnto(target, false);
     }
 
-    public Set<zeitgeruest> getNextLevelOfIsoClassRepresentations(Set<zeitgeruest> start) {
+    public static Set<zeitgeruest> getNextLevelOfIsoClassRepresentations(Set<zeitgeruest> start){
         Set<zeitgeruest> next_level = new HashSet<zeitgeruest>();
+        Iterator<zeitgeruest> it = start.iterator();
+        while (it.hasNext()) {
+            zeitgeruest z = it.next();
+            
+
+            Iterator<nTuple<Integer>> pair = z.possibleNewNeighborPairs().iterator();
+            while (pair.hasNext()) {
+                nTuple<Integer> s_t = pair.next();
+
+                zeitgeruest z2=null;
+                try {
+                    z2 = (zeitgeruest) z.clone();
+                } catch (CloneNotSupportedException ex) {
+                    Logger.getLogger(zeitgeruest.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                z2.X.addPair(s_t.get(0),s_t.get(1));
+
+                Iterator<zeitgeruest> current = next_level.iterator();
+                boolean already_in_there = false;
+                while (current.hasNext()&&(!already_in_there)) {
+                    if (current.next().isIsomorphicTo(z2)) {
+                        already_in_there = true;
+                    }
+                }
+                if (!already_in_there) {
+                    next_level.add(z2);
+                }
+            }
+
+        }
         return next_level;
     }
 
     public Set<chronologischeAbbildung> getAllMapsOnto(zeitgeruest target,
             boolean one_is_enough) {
-        boolean early_checkout = one_is_enough && (T.size()==target.T.size());
+        boolean early_checkout = one_is_enough && (T.size() == target.T.size());
         Set<chronologischeAbbildung> partial_maps = new HashSet<chronologischeAbbildung>();
 
         if (T.size() >= target.T.size()) {
@@ -221,7 +263,7 @@ public class zeitgeruest {
                             if (recursion_depth == free_count) {
                                 if (partial.isPartialTargetOrderDefining()) {
                                     maps.add(partial.mapCopy());
-                                    if (one_is_enough){
+                                    if (one_is_enough) {
                                         return maps;
                                     }
                                 }
@@ -234,7 +276,7 @@ public class zeitgeruest {
                 }
                 if (step_back) {
                     if (recursion_depth > 0) {
-                        
+
                         current_placement.set(recursion_depth, 0);
                     }
                     recursion_depth--;
@@ -246,6 +288,23 @@ public class zeitgeruest {
         }
 
         return maps;
+    }
+
+    public Set<nTuple<Integer>> possibleNewNeighborPairs() {
+        Set<nTuple<Integer>> pairs = new HashSet<nTuple<Integer>>();
+
+        int size = T.size();
+        for (int l = 0; l < size; ++l) {
+            for (int h = l + 1; h < size; ++h) {
+                if (!X.isLess(l, h) && !X.isLess(h, l)) {
+                    pairs.add(new nTuple<Integer>(l, h));
+                    pairs.add(new nTuple<Integer>(h, l));
+                }
+
+            }
+        }
+
+        return pairs;
     }
 
     @Override
@@ -331,28 +390,46 @@ public class zeitgeruest {
             System.out.println(mit.next().isValid());
         }
         System.out.println(allMaps);
-        
+
         zeitgeruest two_plus_two = new zeitgeruest(new Object[]{"1", "2", "j", "k"});
-        two_plus_two.addPairs(new int[]{0,1, 2,3});
+        two_plus_two.addPairs(new int[]{0, 1, 2, 3});
         System.out.println(two_plus_two);
 
         allMaps = two_plus_two.getAllMapsOnto(two_plus_two);
-        System.out.println("Endomorphisms:"+allMaps.size());
+        System.out.println("Endomorphisms:" + allMaps.size());
         System.out.println(allMaps);
 
         zeitgeruest other_two_plus_two = new zeitgeruest(new Object[]{"1", "j", "2", "k"});
-        other_two_plus_two.addPairs(new int[]{0,2, 1,3});
+        other_two_plus_two.addPairs(new int[]{0, 2, 1, 3});
         allMaps = two_plus_two.getAllMapsOnto(other_two_plus_two);
         System.out.println(allMaps);
 
         zeitgeruest c3 = new zeitgeruest(3);
-        c3.addChain(new int[]{0,1,2});
-        System.out.println("3: "+ c3);
+        c3.addChain(new int[]{0, 1, 2});
+        System.out.println("3: " + c3);
 
         System.out.println("Maps between 2+2 and 3:");
         System.out.println(two_plus_two.getAllMapsOnto(c3));
 
-        System.out.println("Is isomorphic? "+other_two_plus_two.isIsomorphicTo(two_plus_two));
+        System.out.println("Is isomorphic? " + other_two_plus_two.isIsomorphicTo(two_plus_two));
+        System.out.println(two_plus_two);
+        System.out.println("New neighbors? " + two_plus_two.possibleNewNeighborPairs());
+        
+        Set<zeitgeruest> s = new HashSet<zeitgeruest>();
+        s.add(two_plus_two);
+        s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
+        System.out.println("#next level = " + s.size());
+        s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
+        System.out.println("#next level = " + s.size());
+        s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
+        System.out.println("#next level = " + s.size());
+        s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
+        System.out.println("#next level = " + s.size());
+        s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
+        System.out.println("#next level = " + s.size());
+                
+
+
 
 
     }

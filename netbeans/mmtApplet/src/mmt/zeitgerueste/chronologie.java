@@ -6,6 +6,8 @@ package mmt.zeitgerueste;
 
 import java.util.*;
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -26,6 +28,84 @@ public class chronologie {
 
         closeRelation();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final chronologie other = (chronologie) obj;
+        if (this.neighborhood_relation != other.neighborhood_relation && (this.neighborhood_relation == null)) {
+            return false;
+        }
+        
+        if (! this.neighborhood_relation.equals(other.neighborhood_relation)){
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + (this.neighborhood_relation != null ? this.neighborhood_relation.hashCode() : 0);
+        return hash;
+    }
+
+    
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        chronologie c = new chronologie();
+        /// DOESNT WORK LIKE THAT: c.relation = (Set<nTuple<Integer>>) this.relation.clone();
+
+        Iterator<nTuple<Integer>> it = relation.iterator();
+        while (it.hasNext()) {
+            c.relation.add((nTuple<Integer>) it.next().clone());
+        }
+
+        it = neighborhood_relation.iterator();
+        while (it.hasNext()) {
+            c.neighborhood_relation.add((nTuple<Integer>) it.next().clone());
+        }
+
+        Iterator<Integer> i = ideals.keySet().iterator();
+        while (i.hasNext()) {
+            Integer s = i.next();
+            c.ideals.put(s, new TreeSet<Integer>(ideals.get(s)));
+        }
+
+        i = filters.keySet().iterator();
+        while (i.hasNext()) {
+            Integer s = i.next();
+            c.filters.put(s, new TreeSet<Integer>(filters.get(s)));
+        }
+
+        i = upper_neighbors.keySet().iterator();
+        while (i.hasNext()) {
+            Integer s = i.next();
+            c.upper_neighbors.put(s, new TreeSet<Integer>(upper_neighbors.get(s)));
+        }
+
+        i = lower_neighbors.keySet().iterator();
+        while (i.hasNext()) {
+            Integer s = i.next();
+            c.lower_neighbors.put(s, new TreeSet<Integer>(lower_neighbors.get(s)));
+        }
+
+        it = longest_up_path.keySet().iterator();
+        while (it.hasNext()) {
+            nTuple<Integer> key = it.next();
+            c.longest_up_path.put((nTuple<Integer>)key.clone(), longest_up_path.get(key));
+        }
+
+        return c;
+    }
+
+    
 
     public Integer getLongestUpPathLength(int x, int y) {
         nTuple<Integer> t = new nTuple<Integer>(x, y);
@@ -50,7 +130,7 @@ public class chronologie {
     public boolean isLowerNeighbor(nTuple<Integer> pair) {
         return neighborhood_relation.contains(pair);
     }
-    
+
     public Set<Integer> getFilter(int x) {
         if (!this.filters.containsKey(x)) {
             this.filters.put(x, new HashSet<Integer>());
@@ -384,6 +464,18 @@ public class chronologie {
         System.out.println("upper: " + c.upper_neighbors);
         System.out.println("upper-neighbors of 0: " + c.getUpperNeighbors(0));
         System.out.println("lower-neighbors of 3: " + c.getLowerNeighbors(3));
+
+        chronologie c2=null;
+        try {
+            c2 = (chronologie) c.clone();
+        } catch (CloneNotSupportedException ex) {
+            Logger.getLogger(chronologie.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        System.out.println("cloning: " + (c2.equals(c)));
+
+        System.out.println(c.neighborhood_relation);
+        System.out.println(c2.neighborhood_relation);
 
     }
 }
