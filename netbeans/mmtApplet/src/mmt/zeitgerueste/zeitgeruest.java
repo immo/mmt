@@ -69,7 +69,30 @@ public class zeitgeruest {
         return this.X.addPairs(pairs);
     }
 
+    public boolean isIsomorphicTo(zeitgeruest target) {
+        if (T.size()!=target.T.size()) {
+            return false;
+        }
+        Set<chronologischeAbbildung> iso = getOneMapOnto(target);
+        return !iso.isEmpty(); /* by (o) the inverse itself is also chronological */
+    }
+
+    public Set<chronologischeAbbildung> getOneMapOnto(zeitgeruest target) {
+        return getAllMapsOnto(target, true);
+    }
+
     public Set<chronologischeAbbildung> getAllMapsOnto(zeitgeruest target) {
+        return getAllMapsOnto(target, false);
+    }
+
+    public Set<zeitgeruest> getNextLevelOfIsoClassRepresentations(Set<zeitgeruest> start) {
+        Set<zeitgeruest> next_level = new HashSet<zeitgeruest>();
+        return next_level;
+    }
+
+    public Set<chronologischeAbbildung> getAllMapsOnto(zeitgeruest target,
+            boolean one_is_enough) {
+        boolean early_checkout = one_is_enough && (T.size()==target.T.size());
         Set<chronologischeAbbildung> partial_maps = new HashSet<chronologischeAbbildung>();
 
         if (T.size() >= target.T.size()) {
@@ -120,6 +143,9 @@ public class zeitgeruest {
                                 if (recursion_depth == codomain_size) {
                                     //this is the last level of recursion
                                     partial_maps.add(current_map.mapCopy());
+                                    if (early_checkout) {
+                                        return partial_maps;
+                                    }
                                     step_back = true;
                                 }
                                 break;
@@ -195,6 +221,9 @@ public class zeitgeruest {
                             if (recursion_depth == free_count) {
                                 if (partial.isPartialTargetOrderDefining()) {
                                     maps.add(partial.mapCopy());
+                                    if (one_is_enough){
+                                        return maps;
+                                    }
                                 }
                                 recursion_depth--;
                             } else {
@@ -311,6 +340,19 @@ public class zeitgeruest {
         System.out.println("Endomorphisms:"+allMaps.size());
         System.out.println(allMaps);
 
+        zeitgeruest other_two_plus_two = new zeitgeruest(new Object[]{"1", "j", "2", "k"});
+        other_two_plus_two.addPairs(new int[]{0,2, 1,3});
+        allMaps = two_plus_two.getAllMapsOnto(other_two_plus_two);
+        System.out.println(allMaps);
+
+        zeitgeruest c3 = new zeitgeruest(3);
+        c3.addChain(new int[]{0,1,2});
+        System.out.println("3: "+ c3);
+
+        System.out.println("Maps between 2+2 and 3:");
+        System.out.println(two_plus_two.getAllMapsOnto(c3));
+
+        System.out.println("Is isomorphic? "+other_two_plus_two.isIsomorphicTo(two_plus_two));
 
 
     }

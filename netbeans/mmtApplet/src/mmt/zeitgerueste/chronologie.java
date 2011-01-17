@@ -50,7 +50,7 @@ public class chronologie {
     public boolean isLowerNeighbor(nTuple<Integer> pair) {
         return neighborhood_relation.contains(pair);
     }
-
+    
     public Set<Integer> getFilter(int x) {
         if (!this.filters.containsKey(x)) {
             this.filters.put(x, new HashSet<Integer>());

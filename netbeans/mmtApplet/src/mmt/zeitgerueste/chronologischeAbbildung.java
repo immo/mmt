@@ -99,6 +99,16 @@ public class chronologischeAbbildung {
         return true;
     }
 
+    public chronologischeAbbildung likeInverseMap() {
+        chronologischeAbbildung inv = new chronologischeAbbildung(target, source);
+        Iterator<Integer> it = map.keySet().iterator();
+        while (it.hasNext()) {
+            Integer i = it.next();
+            inv.map.put(map.get(i), i);
+        }
+        return inv;
+    }
+
     public boolean isComplete() {
         Set<Integer> noImage = new TreeSet<Integer>();
         for (int i = 0; i < source.T.size(); ++i) {
