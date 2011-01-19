@@ -350,6 +350,32 @@ public class zeitgeruest {
         return rep;
     }
 
+    public String getDotCode() {
+        return getDotCode(true, "v");
+    }
+
+    public String getDotCode(boolean with_headers, String node_prefix) {
+        String dot = "";
+        if (with_headers) {
+            dot += "digraph g {\n";
+
+        }
+        
+        for (int i=0;i<T.size();++i) {
+            dot += node_prefix+i+"[label=\"\" shape=\"point\"];\n";
+        }
+        
+        Iterator<nTuple<Integer>> it = X.getNeighbors().iterator();
+        while (it.hasNext()) {
+            nTuple<Integer> edge = it.next();
+            dot += node_prefix+edge.get(0) + " -> " + node_prefix+edge.get(1)+";\n";
+        }
+        
+        dot +="\n}\n";
+        
+        return dot;
+    }
+
     public String getGraphML() {
         return getGraphML(true, "v");
     }
@@ -390,6 +416,12 @@ public class zeitgeruest {
     public void writeToFile(String filename) throws IOException {
         FileWriter file = new FileWriter(filename);
         file.write(getGraphML());
+        file.close();
+    }
+
+    public void writeToDotFile(String filename) throws IOException {
+        FileWriter file = new FileWriter(filename);
+        file.write(getDotCode());
         file.close();
     }
 
@@ -490,14 +522,14 @@ public class zeitgeruest {
         s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
         System.out.println("#next level = " + s.size());
 
-        for (int n = 2; n < 15; ++n) {
+        for (int n = 0; n < 6; ++n) {
             zeitgeruest discrete = new zeitgeruest(n);
             Set<zeitgeruest> classes = new HashSet<zeitgeruest>();
             classes.add(discrete);
             int edges = 0;
 
             (new File("/tmp/zeitgerueste/" + n + "_elements/" + edges + "_edges")).mkdirs();
-            discrete.writeToFile("/tmp/zeitgerueste/" + n + "_elements/" + edges + "_edges/" + n + "v0e_1.graphml");
+            discrete.writeToDotFile("/tmp/zeitgerueste/" + n + "_elements/" + edges + "_edges/" + n + "v0e_1.dot");
             while (!classes.isEmpty()) {
                 ++edges;
                 classes = zeitgeruest.getNextLevelOfIsoClassRepresentations(classes);
@@ -508,8 +540,8 @@ public class zeitgeruest {
                     Iterator<zeitgeruest> it = classes.iterator();
                     while (it.hasNext()) {
                         count++;
-                        it.next().writeToFile("/tmp/zeitgerueste/" + n + "_elements/"
-                                + edges + "_edges/" + n + "v" + edges + "e_" + count + ".graphml");
+                        it.next().writeToDotFile("/tmp/zeitgerueste/" + n + "_elements/"
+                                + edges + "_edges/" + n + "v" + edges + "e_" + count + ".dot");
                     }
 
                 }
