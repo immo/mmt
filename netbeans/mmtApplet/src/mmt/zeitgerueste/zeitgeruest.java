@@ -55,11 +55,9 @@ public class zeitgeruest {
     protected Object clone() throws CloneNotSupportedException {
         zeitgeruest c = new zeitgeruest(T.size());
         c.X = (chronologie) this.X.clone();
-        
+
         return c;
     }
-
-
 
     public boolean addChain(int[] chain) {
         ArrayList<Integer> list = new ArrayList<Integer>(chain.length);
@@ -97,34 +95,36 @@ public class zeitgeruest {
         return getAllMapsOnto(target, false);
     }
 
-    public static Set<zeitgeruest> getNextLevelOfIsoClassRepresentations(Set<zeitgeruest> start){
+    public static Set<zeitgeruest> getNextLevelOfIsoClassRepresentations(Set<zeitgeruest> start) {
         Set<zeitgeruest> next_level = new HashSet<zeitgeruest>();
         Iterator<zeitgeruest> it = start.iterator();
         while (it.hasNext()) {
             zeitgeruest z = it.next();
-            
+
 
             Iterator<nTuple<Integer>> pair = z.possibleNewNeighborPairs().iterator();
             while (pair.hasNext()) {
                 nTuple<Integer> s_t = pair.next();
 
-                zeitgeruest z2=null;
+                zeitgeruest z2 = null;
                 try {
                     z2 = (zeitgeruest) z.clone();
                 } catch (CloneNotSupportedException ex) {
                     Logger.getLogger(zeitgeruest.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                z2.X.addPair(s_t.get(0),s_t.get(1));
-
-                Iterator<zeitgeruest> current = next_level.iterator();
-                boolean already_in_there = false;
-                while (current.hasNext()&&(!already_in_there)) {
-                    if (current.next().isIsomorphicTo(z2)) {
-                        already_in_there = true;
+                z2.X.addPair(s_t.get(0), s_t.get(1));
+                if (z.X.getNeighborEdgeCount() < z2.X.getNeighborEdgeCount()) {
+                    /* it is possible that another neighbor edge will be deleted by adding a new edge */
+                    Iterator<zeitgeruest> current = next_level.iterator();
+                    boolean already_in_there = false;
+                    while (current.hasNext() && (!already_in_there)) {
+                        if (current.next().isIsomorphicTo(z2)) {
+                            already_in_there = true;
+                        }
                     }
-                }
-                if (!already_in_there) {
-                    next_level.add(z2);
+                    if (!already_in_there) {
+                        next_level.add(z2);
+                    }
                 }
             }
 
@@ -291,14 +291,33 @@ public class zeitgeruest {
     }
 
     public Set<nTuple<Integer>> possibleNewNeighborPairs() {
+        return possibleNewNeighborPairs(true);
+    }
+
+    public Set<nTuple<Integer>> possibleNewNeighborPairs(boolean smartForIsoClasses) {
         Set<nTuple<Integer>> pairs = new HashSet<nTuple<Integer>>();
 
-        int size = T.size();
+        Integer size = T.size();
+        if (smartForIsoClasses) {
+            Integer limit = 2 * (X.getNeighborEdgeCount() + 1);
+            /* If we have (n+1) edges, we can only use up to 2*(n+1) different
+             * vertices. w.l.o.g. we can assume that those are the first vertices
+             * of the chronologie, if we are interested in representators of iso
+             * classes only.
+             */
+            if (size > limit) {
+                size = limit;
+            }
+        }
         for (int l = 0; l < size; ++l) {
             for (int h = l + 1; h < size; ++h) {
                 if (!X.isLess(l, h) && !X.isLess(h, l)) {
-                    pairs.add(new nTuple<Integer>(l, h));
-                    pairs.add(new nTuple<Integer>(h, l));
+                    Set<Integer> intersection = new HashSet<Integer>(X.getFilter(h));
+                    intersection.retainAll(X.getFilter(l));
+                    if (intersection.isEmpty()) { //No triangles
+                        pairs.add(new nTuple<Integer>(l, h));
+                        pairs.add(new nTuple<Integer>(h, l));
+                    }
                 }
 
             }
@@ -329,6 +348,49 @@ public class zeitgeruest {
             rep += pair.get(0) + "->" + pair.get(1);
         }
         return rep;
+    }
+
+    public String getGraphML() {
+        return getGraphML(true, "v");
+    }
+
+    public String getGraphML(boolean with_headers, String node_prefix) {
+        String gml = "";
+        if (with_headers) {
+            gml += "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:y=\"http://www.yworks.com/xml/graphml\" xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd\">\n  <!--Created by yFiles for Java 2.7-->\n  <key for=\"graphml\" id=\"d0\" yfiles.type=\"resources\"/>\n  <key attr.name=\"url\" attr.type=\"string\" for=\"node\" id=\"d1\"/>\n  <key attr.name=\"description\" attr.type=\"string\" for=\"node\" id=\"d2\"/>\n  <key for=\"node\" id=\"d3\" yfiles.type=\"nodegraphics\"/>\n  <key attr.name=\"Description\" attr.type=\"string\" for=\"graph\" id=\"d4\">\n    <default/>\n  </key>\n  <key attr.name=\"url\" attr.type=\"string\" for=\"edge\" id=\"d5\"/>\n  <key attr.name=\"description\" attr.type=\"string\" for=\"edge\" id=\"d6\"/>\n  <key for=\"edge\" id=\"d7\" yfiles.type=\"edgegraphics\"/>";
+            gml += "\n<graph edgedefault=\"directed\">";
+        }
+
+
+
+        for (int i = 0; i < T.size(); ++i) {
+            gml += "\n  <node id=\"" + node_prefix + i + "\">"
+                    + "\n      <data key=\"d3\">\n        <y:ShapeNode>\n          <y:Geometry height=\"30.0\" width=\"30.0\" x=\"135.0\" y=\"75.0\"/>\n          <y:Fill color=\"#FFCC00\" transparent=\"false\"/>\n          <y:BorderStyle color=\"#000000\" type=\"line\" width=\"1.0\"/>\n          <y:NodeLabel alignment=\"center\" autoSizePolicy=\"content\" fontFamily=\"Dialog\" fontSize=\"12\" fontStyle=\"plain\" hasBackgroundColor=\"false\" hasLineColor=\"false\" height=\"17.962890625\" modelName=\"internal\" modelPosition=\"c\" textColor=\"#000000\" visible=\"true\" width=\"11.587890625\" x=\"9.2060546875\" y=\"6.0185546875\">"
+                    + i + "</y:NodeLabel>\n          <y:Shape type=\"ellipse\"/>\n        </y:ShapeNode>\n      </data>"
+                    + "\n  </node>";
+        }
+        Iterator<nTuple<Integer>> it = X.getNeighbors().iterator();
+        while (it.hasNext()) {
+            nTuple<Integer> edge = it.next();
+            gml += "\n  <edge source=\"" + node_prefix + edge.get(0) + "\" target=\"" + node_prefix + edge.get(1) + "\">"
+                    + "\n     <data key=\"d7\">\n        <y:QuadCurveEdge straightness=\"0.1\">\n          <y:Path sx=\"0.0\" sy=\"0.0\" tx=\"0.0\" ty=\"0.0\"/>\n          <y:LineStyle color=\"#000000\" type=\"line\" width=\"1.0\"/>\n          <y:Arrows source=\"none\" target=\"standard\"/>\n        </y:QuadCurveEdge>\n      </data>"
+                    + "\n  </edge>";
+        }
+
+
+        if (with_headers) {
+            gml += "\n</graph>";
+            gml += "\n</graphml>";
+        }
+
+
+        return gml;
+    }
+
+    public void writeToFile(String filename) throws IOException {
+        FileWriter file = new FileWriter(filename);
+        file.write(getGraphML());
+        file.close();
     }
 
     public static void main(String args[])
@@ -414,7 +476,7 @@ public class zeitgeruest {
         System.out.println("Is isomorphic? " + other_two_plus_two.isIsomorphicTo(two_plus_two));
         System.out.println(two_plus_two);
         System.out.println("New neighbors? " + two_plus_two.possibleNewNeighborPairs());
-        
+
         Set<zeitgeruest> s = new HashSet<zeitgeruest>();
         s.add(two_plus_two);
         s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
@@ -427,9 +489,32 @@ public class zeitgeruest {
         System.out.println("#next level = " + s.size());
         s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
         System.out.println("#next level = " + s.size());
-                
 
+        for (int n = 2; n < 15; ++n) {
+            zeitgeruest discrete = new zeitgeruest(n);
+            Set<zeitgeruest> classes = new HashSet<zeitgeruest>();
+            classes.add(discrete);
+            int edges = 0;
 
+            (new File("/tmp/zeitgerueste/" + n + "_elements/" + edges + "_edges")).mkdirs();
+            discrete.writeToFile("/tmp/zeitgerueste/" + n + "_elements/" + edges + "_edges/" + n + "v0e_1.graphml");
+            while (!classes.isEmpty()) {
+                ++edges;
+                classes = zeitgeruest.getNextLevelOfIsoClassRepresentations(classes);
+                if (!classes.isEmpty()) {
+                    System.out.println(n + " vertices " + edges + " edges: " + classes.size());
+                    (new File("/tmp/zeitgerueste/" + n + "_elements/" + edges + "_edges")).mkdirs();
+                    int count = 0;
+                    Iterator<zeitgeruest> it = classes.iterator();
+                    while (it.hasNext()) {
+                        count++;
+                        it.next().writeToFile("/tmp/zeitgerueste/" + n + "_elements/"
+                                + edges + "_edges/" + n + "v" + edges + "e_" + count + ".graphml");
+                    }
+
+                }
+            }
+        }
 
 
     }

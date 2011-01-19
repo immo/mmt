@@ -105,7 +105,9 @@ public class chronologie {
         return c;
     }
 
-    
+    public Integer getNeighborEdgeCount() {
+        return neighborhood_relation.size();
+    }
 
     public Integer getLongestUpPathLength(int x, int y) {
         nTuple<Integer> t = new nTuple<Integer>(x, y);
