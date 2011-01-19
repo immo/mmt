@@ -522,7 +522,7 @@ public class zeitgeruest {
         s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
         System.out.println("#next level = " + s.size());
 
-        for (int n = 0; n < 6; ++n) {
+        for (int n = 0; n < 8; ++n) {
             zeitgeruest discrete = new zeitgeruest(n);
             Set<zeitgeruest> classes = new HashSet<zeitgeruest>();
             classes.add(discrete);
