@@ -13,10 +13,22 @@ import java.util.logging.Logger;
  *
  * @author immanuel
  */
-public class zeitgeruest {
+public class zeitgeruest implements Comparable {
 
     ArrayList<traeger> T;
     chronologie X;
+
+    public int compareTo(Object o) {
+        zeitgeruest other = (zeitgeruest)o;
+        int ts = T.size();
+        int os = other.T.size();
+        if (ts!=os) {
+            return ts-os;
+        }
+        return X.compareTo(other.X);
+    }
+
+
 
     public zeitgeruest() {
         T = new ArrayList<traeger>();
@@ -562,7 +574,7 @@ public class zeitgeruest {
 //        }
         Set<zeitgeruest> z = new HashSet<zeitgeruest>();
         Set<zeitgeruest> s = new HashSet<zeitgeruest>();
-        Set<chronologischeAbbildung> maps = new HashSet<chronologischeAbbildung>();
+        Set<chronologischeAbbildung> maps = new TreeSet<chronologischeAbbildung>();
         s.add(new zeitgeruest(2));
         s.add(new zeitgeruest(3));
         s.add(new zeitgeruest(4));

@@ -11,7 +11,7 @@ import java.io.*;
  *
  * @author immanuel
  */
-public class chronologischeAbbildung {
+public class chronologischeAbbildung implements Comparable {
 
     public zeitgeruest source;
     public zeitgeruest target;
@@ -22,6 +22,42 @@ public class chronologischeAbbildung {
         this.target = target;
         this.map = new HashMap<Integer, Integer>();
     }
+
+    public int compareTo(Object o) {
+        chronologischeAbbildung other = (chronologischeAbbildung) o;
+        int cmp = source.compareTo(other.source);
+        if (cmp != 0) {
+            return cmp;
+        }
+        cmp = target.compareTo(other.target);
+        if (cmp != 0) {
+            return cmp;
+        }
+        int ts = map.size();
+        int os = map.size();
+        if (ts!=os) {
+            return ts-os;
+        }
+        Set<Integer> sorted_keys = new TreeSet<Integer>();
+        sorted_keys.addAll(map.keySet());
+
+        Iterator<Integer> it = sorted_keys.iterator();
+        while (it.hasNext()) {
+            Integer i = it.next();
+            if (other.map.containsKey(i)) {
+                Integer tv = map.get(i);
+                Integer ov = other.map.get(i);
+                if (tv != ov) {
+                    return tv - ov;
+                }
+            } else {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+
 
     @Override
     public boolean equals(Object obj) {

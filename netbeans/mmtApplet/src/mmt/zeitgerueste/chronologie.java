@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  *
  * @author immanuel
  */
-public class chronologie {
+public class chronologie implements Comparable {
 
     private Set<nTuple<Integer>> relation;
     private Set<nTuple<Integer>> neighborhood_relation;
@@ -24,10 +24,32 @@ public class chronologie {
     private Map<nTuple<Integer>, Integer> longest_up_path;
 
     public chronologie() {
-        relation = new HashSet<nTuple<Integer>>();
+        relation = new TreeSet<nTuple<Integer>>();
 
         closeRelation();
     }
+
+    public int compareTo(Object o) {
+        chronologie other=(chronologie) o;
+        Set<nTuple<Integer>> meetSet = new TreeSet<nTuple<Integer>>();
+        Set<nTuple<Integer>> deltaSet = new TreeSet<nTuple<Integer>>();
+        deltaSet.addAll(neighborhood_relation);
+        deltaSet.addAll(other.neighborhood_relation);
+        meetSet.addAll(neighborhood_relation);
+        meetSet.retainAll(other.neighborhood_relation);
+        deltaSet.removeAll(meetSet);
+        if (deltaSet.isEmpty()) {
+            return 0;
+        } else {
+            nTuple<Integer> first_difference = deltaSet.iterator().next();
+            if (neighborhood_relation.contains(first_difference)) {
+                return 1;
+            }
+            return -1;
+        }
+    }
+
+
 
     @Override
     public boolean equals(Object obj) {
@@ -243,8 +265,8 @@ public class chronologie {
     }
 
     public void closeRelation() {
-        Set<nTuple<Integer>> closure = new HashSet<nTuple<Integer>>();
-        Set<nTuple<Integer>> neighborhood = new HashSet<nTuple<Integer>>();
+        Set<nTuple<Integer>> closure = new TreeSet<nTuple<Integer>>();
+        Set<nTuple<Integer>> neighborhood = new TreeSet<nTuple<Integer>>();
         Map<Integer, Set<Integer>> ideals = new HashMap<Integer, Set<Integer>>();
         Map<Integer, Set<Integer>> filters = new HashMap<Integer, Set<Integer>>();
         Map<Integer, Set<Integer>> non_neighbors = new HashMap<Integer, Set<Integer>>();
