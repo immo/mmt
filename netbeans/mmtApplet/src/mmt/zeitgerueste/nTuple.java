@@ -14,7 +14,7 @@ import java.lang.reflect.*;
  *
  * @author immanuel
  */
-public class nTuple<T> {
+public class nTuple<T> implements Comparable {
 
     public ArrayList<T> tuple;
 
@@ -28,6 +28,26 @@ public class nTuple<T> {
             this.tuple.add(tuple[i]);
         }
     }
+
+    public int compareTo(Object o) {
+        nTuple<T> other = (nTuple<T>) o;
+        int os = other.tuple.size();
+        int ts = this.tuple.size();
+        if (os != ts) {
+            return ts - os;
+        }
+        for (int i=0;i<os;++i) {
+            Comparable<T> p = (Comparable<T>) this.tuple.get(i);
+            int cmp = p.compareTo(other.tuple.get(i));
+            if (cmp != 0) {
+                return cmp;
+            }
+        }
+        return 0;
+        
+    }
+
+
 
     @Override
     protected Object clone() throws CloneNotSupportedException {
@@ -157,7 +177,7 @@ public class nTuple<T> {
         System.out.println(v2.hashCode());
         System.out.println(x.hashCode());
         System.out.println(t.hashCode());
-        Set<nTuple<Integer>> tupleSet = new HashSet<nTuple<Integer>>();
+        Set<nTuple<Integer>> tupleSet = new TreeSet<nTuple<Integer>>();
         tupleSet.add(t);
         System.out.println(tupleSet);
         tupleSet.add(x);
