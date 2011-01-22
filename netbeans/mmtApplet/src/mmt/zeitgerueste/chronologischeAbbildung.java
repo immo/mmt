@@ -23,6 +23,36 @@ public class chronologischeAbbildung {
         this.map = new HashMap<Integer, Integer>();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final chronologischeAbbildung other = (chronologischeAbbildung) obj;
+        if (this.source != other.source && (this.source == null || !this.source.equals(other.source))) {
+            return false;
+        }
+        if (this.target != other.target && (this.target == null || !this.target.equals(other.target))) {
+            return false;
+        }
+        if (this.map != other.map && (this.map == null || !this.map.equals(other.map))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 41 * hash + (this.source != null ? this.source.hashCode() : 0);
+        hash = 41 * hash + (this.target != null ? this.target.hashCode() : 0);
+        hash = 41 * hash + (this.map != null ? this.map.hashCode() : 0);
+        return hash;
+    }
+
     public void addMappingPairs(int[] pairs) {
         for (int i = 0; i + 1 < pairs.length; i += 2) {
             this.map.put(pairs[i], pairs[i + 1]);
