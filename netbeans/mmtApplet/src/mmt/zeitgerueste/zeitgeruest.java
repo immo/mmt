@@ -186,13 +186,13 @@ public class zeitgeruest {
                                 if (recursion_depth == codomain_size) {
                                     //this is the last level of recursion
                                     partial_maps.add(current_map.mapCopy());
-                                    
+
                                     if (early_checkout) {
                                         return partial_maps;
                                     }
                                     step_back = true;
                                 }
-                                
+
                                 break;
                             } else {
 
@@ -233,7 +233,7 @@ public class zeitgeruest {
             return partial_maps;
         }
 
-        
+
         /* since (s) is already fulfilled, we choose the rest of the mapping
          * such that it is compatible with (m) and finally we check whether
          * (o) holds.
@@ -250,7 +250,7 @@ public class zeitgeruest {
             for (int i = 0; i < free_count; ++i) {
                 current_placement.add(0);
             }
-            
+
             boolean step_back = false;
 
             while (recursion_depth >= 0) {
@@ -266,16 +266,16 @@ public class zeitgeruest {
                             recursion_depth++;
                             if (recursion_depth == free_count) {
                                 if (partial.isPartialTargetOrderDefining()) {
-                                    
+
                                     maps.add(partial.mapCopy());
-                                    
+
                                     if (one_is_enough) {
                                         return maps;
                                     }
                                 }
                                 recursion_depth--;
                             } else {
-                                current_placement.set(recursion_depth-1,image+1);
+                                current_placement.set(recursion_depth - 1, image + 1);
                                 break;
                             }
                         }
@@ -358,28 +358,34 @@ public class zeitgeruest {
     }
 
     public String getDotCode() {
-        return getDotCode(true, "v");
+        return getDotCode(true, "v", "", "");
     }
 
-    public String getDotCode(boolean with_headers, String node_prefix) {
+    public String getDotCode(boolean with_headers, String node_prefix, String node_ops, String arrow_ops) {
         String dot = "";
         if (with_headers) {
             dot += "digraph g {\n";
 
         }
-        
-        for (int i=0;i<T.size();++i) {
-            dot += node_prefix+i+"[label=\"\" shape=\"point\"];\n";
+
+        for (int i = 0; i < T.size(); ++i) {
+            dot += node_prefix + i + "[label=\"\" shape=\"point\" " + node_ops + "];\n";
         }
-        
+
         Iterator<nTuple<Integer>> it = X.getNeighbors().iterator();
         while (it.hasNext()) {
             nTuple<Integer> edge = it.next();
-            dot += node_prefix+edge.get(0) + " -> " + node_prefix+edge.get(1)+";\n";
+            if (arrow_ops.length() > 0) {
+                dot += node_prefix + edge.get(0) + " -> " + node_prefix + edge.get(1) + "["+arrow_ops+"];\n";
+            } else {
+                dot += node_prefix + edge.get(0) + " -> " + node_prefix + edge.get(1) + ";\n";
+            }
         }
-        
-        dot +="\n}\n";
-        
+
+        if (with_headers) {
+            dot += "\n}\n";
+        }
+
         return dot;
     }
 
@@ -554,31 +560,32 @@ public class zeitgeruest {
 //                }
 //            }
 //        }
-        Set<zeitgeruest> z = new HashSet<zeitgeruest> ();
-        Set<zeitgeruest> s = new HashSet<zeitgeruest> ();
+        Set<zeitgeruest> z = new HashSet<zeitgeruest>();
+        Set<zeitgeruest> s = new HashSet<zeitgeruest>();
         Set<chronologischeAbbildung> maps = new HashSet<chronologischeAbbildung>();
         s.add(new zeitgeruest(2));
         s.add(new zeitgeruest(3));
         s.add(new zeitgeruest(4));
-        
+
         z.addAll(s);
         while (!s.isEmpty()) {
             s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
             z.addAll(s);
         }
         System.out.println("#zeitgeruests = " + z.size());
-        
+
         Iterator<zeitgeruest> it = z.iterator();
         while (it.hasNext()) {
             zeitgeruest source = it.next();
             Iterator<zeitgeruest> jt = z.iterator();
             while (jt.hasNext()) {
                 zeitgeruest target = jt.next();
-                if (target.T.size()<source.T.size()) {
+                if (target.T.size() < source.T.size()) {
                     maps.addAll(source.getAllMapsOnto(target));
                 }
             }
         }
         System.out.println("#maps = " + maps.size());
+        System.out.println(((chronologischeAbbildung)maps.toArray()[3]).getDotCode());
     }
 }

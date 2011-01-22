@@ -272,6 +272,28 @@ public class chronologischeAbbildung {
         return format;
     }
 
+    public String getDotCode() {
+        String dot = "digraph G {\n";
+        dot += "subgraph cluster_1 {\ncolor=\"lightgrey\";\n";
+        dot += target.getDotCode(false, "t", "color=\"red\"", "color=\"lightgrey\"");
+        dot += "}\n";
+
+        dot += "subgraph cluster_2 {\ncolor=\"lightgrey\";\n";
+        dot += source.getDotCode(false, "s", "color=\"blue\"", "color=\"lightgrey\"");
+        dot += "}\n";
+
+        Iterator<Integer> it = map.keySet().iterator();
+        while (it.hasNext()) {
+            Integer s = it.next();
+            Integer t = map.get(s);
+
+            dot += "s"+s+" -> "+"t"+t+";\n";
+        }
+
+        dot += "}";
+        return dot;
+    }
+
     public static void main(String args[])
             throws java.io.IOException, java.io.FileNotFoundException {
     }
