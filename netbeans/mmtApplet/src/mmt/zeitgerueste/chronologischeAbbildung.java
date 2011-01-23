@@ -23,6 +23,78 @@ public class chronologischeAbbildung implements Comparable {
         this.map = new HashMap<Integer, Integer>();
     }
 
+    public chronologischeAbbildung(chronologischeAbbildung f, chronologischeAbbildung g) {
+        this.source = f.source;
+        this.target = g.target;
+        this.map = new HashMap<Integer, Integer>();
+        Iterator<Integer> it = f.map.keySet().iterator();
+        while (it.hasNext()) {
+            Integer i = it.next();
+            Integer fi = f.map.get(i);
+            if (g.map.containsKey(fi)) {
+                this.map.put(i, g.map.get(fi));
+            }
+        }
+    }
+
+    public chronologischeAbbildung(chronologischeAbbildung f, chronologischeAbbildung g, chronologischeAbbildung h) {
+      this.source = f.source;
+        this.target = h.target;
+        this.map = new HashMap<Integer, Integer>();
+        Iterator<Integer> it = f.map.keySet().iterator();
+        while (it.hasNext()) {
+            Integer i = it.next();
+            Integer fi = f.map.get(i);
+            if (g.map.containsKey(fi)) {
+                Integer gfi = g.map.get(fi);
+                if (h.map.containsKey(gfi)) {
+                    this.map.put(i, h.map.get(gfi));
+                }
+            }
+        }
+
+    }
+
+    public boolean isEquivalentToByIsoSets(Set<chronologischeAbbildung> source_isos,
+            Set<chronologischeAbbildung> target_isos , chronologischeAbbildung f) {
+        if (map.size() != f.map.size()) {
+            return false;
+        }
+
+        /* test whether s*f*t == this for some s,t */
+
+        Iterator<chronologischeAbbildung> st = source_isos.iterator();
+        while (st.hasNext()) {
+            chronologischeAbbildung s = st.next();
+            Iterator<chronologischeAbbildung> tt = target_isos.iterator();
+            while (tt.hasNext()) {
+                chronologischeAbbildung t = tt.next();
+                Iterator<Integer> it = map.keySet().iterator();
+                boolean counterexample = false;
+                while (it.hasNext()) {
+                    Integer i = it.next();
+                    Integer si = s.map.get(i);
+                    if (f.map.containsKey(si)) {
+                        Integer fsi = f.map.get(si);
+                        Integer tfsi = t.map.get(fsi);
+                        if (tfsi != map.get(i)) {
+                            counterexample = true;
+                            break;
+                        }
+                    } else {
+                        counterexample = true;
+                        break;
+                    }
+                }
+                if (!counterexample) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public int compareTo(Object o) {
         chronologischeAbbildung other = (chronologischeAbbildung) o;
         int cmp = source.compareTo(other.source);

@@ -587,7 +587,17 @@ public class zeitgeruest implements Comparable {
         }
         System.out.println("#zeitgeruests = " + z.size());
 
+        Map<zeitgeruest,Set<chronologischeAbbildung>> automorphisms = new HashMap<zeitgeruest,Set<chronologischeAbbildung>>();
+
         Iterator<zeitgeruest> it = z.iterator();
+        while (it.hasNext()) {
+            zeitgeruest source = it.next();
+            automorphisms.put(source, source.getAllMapsOnto(source));
+            System.out.print("["+automorphisms.get(source).size()+"] ");
+        }
+        System.out.println("");
+
+        it = z.iterator();
         while (it.hasNext()) {
             zeitgeruest source = it.next();
             Iterator<zeitgeruest> jt = z.iterator();
@@ -599,13 +609,36 @@ public class zeitgeruest implements Comparable {
             }
         }
         System.out.println("#maps = " + maps.size());
-        (new File("/tmp/chronologischeAbbildungen")).mkdirs();
+        
+        Set<chronologischeAbbildung> map_classes = new TreeSet<chronologischeAbbildung>();
         Iterator<chronologischeAbbildung> mt = maps.iterator();
+        while (mt.hasNext()) {
+            chronologischeAbbildung m = mt.next();
+            Iterator<chronologischeAbbildung> ct = map_classes.iterator();
+            boolean new_class = true;
+            while (ct.hasNext()) {
+                chronologischeAbbildung c = ct.next();
+                if ((c.source == m.source)&&(c.target == m.target)) {
+                    if (m.isEquivalentToByIsoSets(automorphisms.get(m.source), automorphisms.get(m.target), c)) {
+                        new_class = false;
+                        break;
+                    }
+                }
+            }
+            if (new_class) {
+                map_classes.add(m);
+            }
+        }
+
+        System.out.println("#classes = " + map_classes.size());
+
+        (new File("/tmp/chronologischeAbbildungen")).mkdirs();
+        mt = map_classes.iterator();
         Integer nbr = 0;
         while (mt.hasNext()) {
             chronologischeAbbildung m = mt.next();
             nbr++;
-            String filename = "/tmp/chronologischeAbbildungen/map_"+String.format("%06d",nbr)+".dot";
+            String filename = "/tmp/chronologischeAbbildungen/map_class_"+String.format("%06d",nbr)+".dot";
             System.out.println(filename);
             FileWriter file = new FileWriter(filename);
             file.write(m.getDotCode());
