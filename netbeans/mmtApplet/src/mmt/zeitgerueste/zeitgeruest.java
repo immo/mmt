@@ -578,6 +578,7 @@ public class zeitgeruest implements Comparable {
         s.add(new zeitgeruest(2));
         s.add(new zeitgeruest(3));
         s.add(new zeitgeruest(4));
+        s.add(new zeitgeruest(5));
 
         z.addAll(s);
         while (!s.isEmpty()) {
@@ -598,6 +599,17 @@ public class zeitgeruest implements Comparable {
             }
         }
         System.out.println("#maps = " + maps.size());
-        System.out.println(((chronologischeAbbildung)maps.toArray()[3]).getDotCode());
+        (new File("/tmp/chronologischeAbbildungen")).mkdirs();
+        Iterator<chronologischeAbbildung> mt = maps.iterator();
+        Integer nbr = 0;
+        while (mt.hasNext()) {
+            chronologischeAbbildung m = mt.next();
+            nbr++;
+            String filename = "/tmp/chronologischeAbbildungen/map_"+String.format("%06d",nbr)+".dot";
+            System.out.println(filename);
+            FileWriter file = new FileWriter(filename);
+            file.write(m.getDotCode());
+            file.close();
+        }
     }
 }
