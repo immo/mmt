@@ -19,16 +19,14 @@ public class zeitgeruest implements Comparable {
     chronologie X;
 
     public int compareTo(Object o) {
-        zeitgeruest other = (zeitgeruest)o;
+        zeitgeruest other = (zeitgeruest) o;
         int ts = T.size();
         int os = other.T.size();
-        if (ts!=os) {
-            return ts-os;
+        if (ts != os) {
+            return ts - os;
         }
         return X.compareTo(other.X);
     }
-
-
 
     public zeitgeruest() {
         T = new ArrayList<traeger>();
@@ -388,7 +386,7 @@ public class zeitgeruest implements Comparable {
         while (it.hasNext()) {
             nTuple<Integer> edge = it.next();
             if (arrow_ops.length() > 0) {
-                dot += node_prefix + edge.get(0) + " -> " + node_prefix + edge.get(1) + "["+arrow_ops+"];\n";
+                dot += node_prefix + edge.get(0) + " -> " + node_prefix + edge.get(1) + "[" + arrow_ops + "];\n";
             } else {
                 dot += node_prefix + edge.get(0) + " -> " + node_prefix + edge.get(1) + ";\n";
             }
@@ -450,128 +448,7 @@ public class zeitgeruest implements Comparable {
         file.close();
     }
 
-    public static void main(String args[])
-            throws java.io.IOException, java.io.FileNotFoundException {
-//        System.out.println("test? " + ((new int[]{1, 2}) == (new int[]{1, 2}))); //DAMN YOUR EYES, JAVA!
-//        System.out.println("equals? " + (new int[]{1, 2}).equals(new int[]{1, 2})); //EVEN MORE
-//
-//        zeitgeruest source = new zeitgeruest(new Object[]{"1", "2", "3", "4"});
-//        source.addChain(new int[]{0, 1, 2});
-//
-//        zeitgeruest t1 = new zeitgeruest(new Object[]{"1/2", "3", "4"});
-//        t1.addChain(new int[]{0, 1});
-//        zeitgeruest t2 = new zeitgeruest(new Object[]{"1", "2/3", "4"});
-//        t2.addChain(new int[]{0, 1});
-//        zeitgeruest t3 = new zeitgeruest(new Object[]{"1/2/3/4"});
-//
-//        zeitgeruest t4 = new zeitgeruest(new Object[]{"2", "1", "3", "4"});
-//        t4.addChain(new int[]{0, 1, 2});
-//        zeitgeruest t5 = new zeitgeruest(new Object[]{"1", "2", "3", "4"});
-//        zeitgeruest t6 = new zeitgeruest(new Object[]{"2", "3", "1/4"});
-//        t6.addChain(new int[]{0, 1});
-//        zeitgeruest t7 = new zeitgeruest(new Object[]{"1", "2", "3", "4", "_"});
-//        t7.addChain(new int[]{0, 1, 2});
-//
-//        ArrayList<chronologischeAbbildung> maps = new ArrayList<chronologischeAbbildung>();
-//        maps.add(new chronologischeAbbildung(source, t1));
-//        maps.add(new chronologischeAbbildung(source, t2));
-//        maps.add(new chronologischeAbbildung(source, t3));
-//        maps.add(new chronologischeAbbildung(source, t4));
-//        maps.add(new chronologischeAbbildung(source, t5));
-//        maps.add(new chronologischeAbbildung(source, t6));
-//        maps.add(new chronologischeAbbildung(source, t7));
-//
-//        maps.get(0).addMappingPairs(new int[]{0, 0, 1, 0, 2, 1, 3, 2});
-//        maps.get(1).addMappingPairs(new int[]{0, 0, 1, 1, 2, 1, 3, 2});
-//        maps.get(2).addMappingPairs(new int[]{0, 0, 1, 0, 2, 0, 3, 0});
-//        maps.get(3).addMappingPairs(new int[]{0, 1, 1, 0, 2, 2, 3, 3});
-//        maps.get(4).addMappingPairs(new int[]{0, 0, 1, 1, 2, 2, 3, 3});
-//        maps.get(5).addMappingPairs(new int[]{0, 2, 1, 0, 2, 1, 3, 2});
-//        maps.get(6).addMappingPairs(new int[]{0, 0, 1, 1, 2, 2, 3, 3});
-//
-//
-//        System.out.println(maps);
-//
-//        System.out.println("\n\n");
-//        for (int i = 0; i < 7; ++i) {
-//            System.out.println("Map #" + i);
-//            System.out.println("(c)? " + maps.get(i).isComplete()
-//                    + " (s)? " + maps.get(i).isSurjective()
-//                    + " (m)? " + maps.get(i).isPartialWeaklyMonotone()
-//                    + " (o)? " + maps.get(i).isPartialTargetOrderDefining());
-//        }
-//
-//        System.out.println("Maps between source and t1:");
-//        Set<chronologischeAbbildung> allMaps = source.getAllMapsOnto(t1);
-//        System.out.println(allMaps.size());
-//        Iterator<chronologischeAbbildung> mit = allMaps.iterator();
-//        while (mit.hasNext()) {
-//            System.out.println(mit.next().isValid());
-//        }
-//        System.out.println(allMaps);
-//
-//        zeitgeruest two_plus_two = new zeitgeruest(new Object[]{"1", "2", "j", "k"});
-//        two_plus_two.addPairs(new int[]{0, 1, 2, 3});
-//        System.out.println(two_plus_two);
-//
-//        allMaps = two_plus_two.getAllMapsOnto(two_plus_two);
-//        System.out.println("Endomorphisms:" + allMaps.size());
-//        System.out.println(allMaps);
-//
-//        zeitgeruest other_two_plus_two = new zeitgeruest(new Object[]{"1", "j", "2", "k"});
-//        other_two_plus_two.addPairs(new int[]{0, 2, 1, 3});
-//        allMaps = two_plus_two.getAllMapsOnto(other_two_plus_two);
-//        System.out.println(allMaps);
-//
-//        zeitgeruest c3 = new zeitgeruest(3);
-//        c3.addChain(new int[]{0, 1, 2});
-//        System.out.println("3: " + c3);
-//
-//        System.out.println("Maps between 2+2 and 3:");
-//        System.out.println(two_plus_two.getAllMapsOnto(c3));
-//
-//        System.out.println("Is isomorphic? " + other_two_plus_two.isIsomorphicTo(two_plus_two));
-//        System.out.println(two_plus_two);
-//        System.out.println("New neighbors? " + two_plus_two.possibleNewNeighborPairs());
-//
-//        Set<zeitgeruest> s = new HashSet<zeitgeruest>();
-//        s.add(two_plus_two);
-//        s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
-//        System.out.println("#next level = " + s.size());
-//        s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
-//        System.out.println("#next level = " + s.size());
-//        s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
-//        System.out.println("#next level = " + s.size());
-//        s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
-//        System.out.println("#next level = " + s.size());
-//        s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
-//        System.out.println("#next level = " + s.size());
-//
-//        for (int n = 0; n < 8; ++n) {
-//            zeitgeruest discrete = new zeitgeruest(n);
-//            Set<zeitgeruest> classes = new HashSet<zeitgeruest>();
-//            classes.add(discrete);
-//            int edges = 0;
-//
-//            (new File("/tmp/zeitgerueste/" + n + "_elements/" + edges + "_edges")).mkdirs();
-//            discrete.writeToDotFile("/tmp/zeitgerueste/" + n + "_elements/" + edges + "_edges/" + n + "v0e_1.dot");
-//            while (!classes.isEmpty()) {
-//                ++edges;
-//                classes = zeitgeruest.getNextLevelOfIsoClassRepresentations(classes);
-//                if (!classes.isEmpty()) {
-//                    System.out.println(n + " vertices " + edges + " edges: " + classes.size());
-//                    (new File("/tmp/zeitgerueste/" + n + "_elements/" + edges + "_edges")).mkdirs();
-//                    int count = 0;
-//                    Iterator<zeitgeruest> it = classes.iterator();
-//                    while (it.hasNext()) {
-//                        count++;
-//                        it.next().writeToDotFile("/tmp/zeitgerueste/" + n + "_elements/"
-//                                + edges + "_edges/" + n + "v" + edges + "e_" + count + ".dot");
-//                    }
-//
-//                }
-//            }
-//        }
+    public static void mkMapIsoClasses() throws java.io.IOException, java.io.FileNotFoundException {
         Set<zeitgeruest> z = new HashSet<zeitgeruest>();
         Set<zeitgeruest> s = new HashSet<zeitgeruest>();
         Set<chronologischeAbbildung> maps = new TreeSet<chronologischeAbbildung>();
@@ -587,13 +464,13 @@ public class zeitgeruest implements Comparable {
         }
         System.out.println("#zeitgeruests = " + z.size());
 
-        Map<zeitgeruest,Set<chronologischeAbbildung>> automorphisms = new HashMap<zeitgeruest,Set<chronologischeAbbildung>>();
+        Map<zeitgeruest, Set<chronologischeAbbildung>> automorphisms = new HashMap<zeitgeruest, Set<chronologischeAbbildung>>();
 
         Iterator<zeitgeruest> it = z.iterator();
         while (it.hasNext()) {
             zeitgeruest source = it.next();
             automorphisms.put(source, source.getAllMapsOnto(source));
-            System.out.print("["+automorphisms.get(source).size()+"] ");
+            System.out.print("[" + automorphisms.get(source).size() + "] ");
         }
         System.out.println("");
 
@@ -609,7 +486,7 @@ public class zeitgeruest implements Comparable {
             }
         }
         System.out.println("#maps = " + maps.size());
-        
+
         Set<chronologischeAbbildung> map_classes = new TreeSet<chronologischeAbbildung>();
         Iterator<chronologischeAbbildung> mt = maps.iterator();
         while (mt.hasNext()) {
@@ -618,7 +495,7 @@ public class zeitgeruest implements Comparable {
             boolean new_class = true;
             while (ct.hasNext()) {
                 chronologischeAbbildung c = ct.next();
-                if ((c.source == m.source)&&(c.target == m.target)) {
+                if ((c.source == m.source) && (c.target == m.target)) {
                     if (m.isEquivalentToByIsoSets(automorphisms.get(m.source), automorphisms.get(m.target), c)) {
                         new_class = false;
                         break;
@@ -638,11 +515,140 @@ public class zeitgeruest implements Comparable {
         while (mt.hasNext()) {
             chronologischeAbbildung m = mt.next();
             nbr++;
-            String filename = "/tmp/chronologischeAbbildungen/map_class_"+String.format("%06d",nbr)+".dot";
+            String filename = "/tmp/chronologischeAbbildungen/map_class_" + String.format("%06d", nbr) + ".dot";
             System.out.println(filename);
             FileWriter file = new FileWriter(filename);
             file.write(m.getDotCode());
             file.close();
         }
+    }
+
+    public static void mkZeitgeruestsIsoClasses() throws java.io.IOException, java.io.FileNotFoundException {
+        System.out.println("test? " + ((new int[]{1, 2}) == (new int[]{1, 2}))); //DAMN YOUR EYES, JAVA!
+        System.out.println("equals? " + (new int[]{1, 2}).equals(new int[]{1, 2})); //EVEN MORE
+
+        zeitgeruest source = new zeitgeruest(new Object[]{"1", "2", "3", "4"});
+        source.addChain(new int[]{0, 1, 2});
+
+        zeitgeruest t1 = new zeitgeruest(new Object[]{"1/2", "3", "4"});
+        t1.addChain(new int[]{0, 1});
+        zeitgeruest t2 = new zeitgeruest(new Object[]{"1", "2/3", "4"});
+        t2.addChain(new int[]{0, 1});
+        zeitgeruest t3 = new zeitgeruest(new Object[]{"1/2/3/4"});
+
+        zeitgeruest t4 = new zeitgeruest(new Object[]{"2", "1", "3", "4"});
+        t4.addChain(new int[]{0, 1, 2});
+        zeitgeruest t5 = new zeitgeruest(new Object[]{"1", "2", "3", "4"});
+        zeitgeruest t6 = new zeitgeruest(new Object[]{"2", "3", "1/4"});
+        t6.addChain(new int[]{0, 1});
+        zeitgeruest t7 = new zeitgeruest(new Object[]{"1", "2", "3", "4", "_"});
+        t7.addChain(new int[]{0, 1, 2});
+
+        ArrayList<chronologischeAbbildung> maps = new ArrayList<chronologischeAbbildung>();
+        maps.add(new chronologischeAbbildung(source, t1));
+        maps.add(new chronologischeAbbildung(source, t2));
+        maps.add(new chronologischeAbbildung(source, t3));
+        maps.add(new chronologischeAbbildung(source, t4));
+        maps.add(new chronologischeAbbildung(source, t5));
+        maps.add(new chronologischeAbbildung(source, t6));
+        maps.add(new chronologischeAbbildung(source, t7));
+
+        maps.get(0).addMappingPairs(new int[]{0, 0, 1, 0, 2, 1, 3, 2});
+        maps.get(1).addMappingPairs(new int[]{0, 0, 1, 1, 2, 1, 3, 2});
+        maps.get(2).addMappingPairs(new int[]{0, 0, 1, 0, 2, 0, 3, 0});
+        maps.get(3).addMappingPairs(new int[]{0, 1, 1, 0, 2, 2, 3, 3});
+        maps.get(4).addMappingPairs(new int[]{0, 0, 1, 1, 2, 2, 3, 3});
+        maps.get(5).addMappingPairs(new int[]{0, 2, 1, 0, 2, 1, 3, 2});
+        maps.get(6).addMappingPairs(new int[]{0, 0, 1, 1, 2, 2, 3, 3});
+
+
+        System.out.println(maps);
+
+        System.out.println("\n\n");
+        for (int i = 0; i < 7; ++i) {
+            System.out.println("Map #" + i);
+            System.out.println("(c)? " + maps.get(i).isComplete()
+                    + " (s)? " + maps.get(i).isSurjective()
+                    + " (m)? " + maps.get(i).isPartialWeaklyMonotone()
+                    + " (o)? " + maps.get(i).isPartialTargetOrderDefining());
+        }
+
+        System.out.println("Maps between source and t1:");
+        Set<chronologischeAbbildung> allMaps = source.getAllMapsOnto(t1);
+        System.out.println(allMaps.size());
+        Iterator<chronologischeAbbildung> mit = allMaps.iterator();
+        while (mit.hasNext()) {
+            System.out.println(mit.next().isValid());
+        }
+        System.out.println(allMaps);
+
+        zeitgeruest two_plus_two = new zeitgeruest(new Object[]{"1", "2", "j", "k"});
+        two_plus_two.addPairs(new int[]{0, 1, 2, 3});
+        System.out.println(two_plus_two);
+
+        allMaps = two_plus_two.getAllMapsOnto(two_plus_two);
+        System.out.println("Endomorphisms:" + allMaps.size());
+        System.out.println(allMaps);
+
+        zeitgeruest other_two_plus_two = new zeitgeruest(new Object[]{"1", "j", "2", "k"});
+        other_two_plus_two.addPairs(new int[]{0, 2, 1, 3});
+        allMaps = two_plus_two.getAllMapsOnto(other_two_plus_two);
+        System.out.println(allMaps);
+
+        zeitgeruest c3 = new zeitgeruest(3);
+        c3.addChain(new int[]{0, 1, 2});
+        System.out.println("3: " + c3);
+
+        System.out.println("Maps between 2+2 and 3:");
+        System.out.println(two_plus_two.getAllMapsOnto(c3));
+
+        System.out.println("Is isomorphic? " + other_two_plus_two.isIsomorphicTo(two_plus_two));
+        System.out.println(two_plus_two);
+        System.out.println("New neighbors? " + two_plus_two.possibleNewNeighborPairs());
+
+        Set<zeitgeruest> s = new HashSet<zeitgeruest>();
+        s.add(two_plus_two);
+        s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
+        System.out.println("#next level = " + s.size());
+        s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
+        System.out.println("#next level = " + s.size());
+        s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
+        System.out.println("#next level = " + s.size());
+        s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
+        System.out.println("#next level = " + s.size());
+        s = zeitgeruest.getNextLevelOfIsoClassRepresentations(s);
+        System.out.println("#next level = " + s.size());
+
+        for (int n = 0; n < 8; ++n) {
+            zeitgeruest discrete = new zeitgeruest(n);
+            Set<zeitgeruest> classes = new HashSet<zeitgeruest>();
+            classes.add(discrete);
+            int edges = 0;
+
+            (new File("/tmp/zeitgerueste/" + String.format("%03d",n) + "_elements/" + String.format("%03d",edges) + "_edges")).mkdirs();
+            discrete.writeToDotFile("/tmp/zeitgerueste/" + String.format("%03d",n) + "_elements/" + String.format("%03d",edges) + "_edges/" + n + "v0e_1.dot");
+
+            while (!classes.isEmpty()) {
+                ++edges;
+                classes = new TreeSet<zeitgeruest>(zeitgeruest.getNextLevelOfIsoClassRepresentations(classes));
+                if (!classes.isEmpty()) {
+                    System.out.println(String.format("%03d",n) + " vertices " + String.format("%03d",edges) + " edges: " + classes.size());
+                    (new File("/tmp/zeitgerueste/" + String.format("%03d",n) + "_elements/" + String.format("%03d",edges) + "_edges")).mkdirs();
+                    int count = 0;
+                    Iterator<zeitgeruest> it = classes.iterator();
+                    while (it.hasNext()) {
+                        count++;
+                        it.next().writeToDotFile("/tmp/zeitgerueste/" + String.format("%03d",n) + "_elements/"
+                                + String.format("%03d",edges) + "_edges/" + String.format("%03d",n) + "v" + String.format("%03d",edges)  + "e_" + String.format("%05d",count) + ".dot");
+                    }
+
+                }
+            }
+        }
+    }
+
+    public static void main(String args[])
+            throws java.io.IOException, java.io.FileNotFoundException {
+        mkZeitgeruestsIsoClasses();
     }
 }
