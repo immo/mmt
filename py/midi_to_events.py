@@ -10,8 +10,8 @@ class readable_stream(object):
         self.location = 0
         self.len = len(stream)
 
-    def read(self,count=1):
-        if count == 1:
+    def read(self,count=1, smart=1):
+        if (count == 1) and (smart):
             self.location += 1
             return self.stream[self.location-1]
         start = self.location
@@ -42,29 +42,38 @@ class readable_stream(object):
 def extract_midi_events(stream):
     delta_time = 0
     events = []
-    data_length = {8: 1,\
-                   9: 1,\
-                   0xA: 1,\
-                   0xB: 1,\
-                   0xC: 1,\
-                   0xD: 1,\
-                   0xE: 1,\
-                   0xF: 1}
+    data_length = {8: 2, #note off (note velocity) \
+                   9: 2, #note on (note velocity) \
+                   0xA: 2, #after-touch (note velocity) \
+                   0xB: 2, #control change (controler value) \
+                   0xC: 1, #program change (prnumber) \
+                   0xD: 1, #channel after-touch (channel) \
+                   0xE: 1} #pitch wheel change (bottom top) \
     current_command = 8
     current_channel = 0
     while not stream.eof():
         delta_time += stream.rbeWord()
         b = stream.read()
-        if b&0x80:
+        if stream.eof():
+            break
+        if b == 0xFF: #meta command
+            meta_command = stream.read()
+            meta_length = stream.read()
+            meta_data = stream.read(meta_length, 0)
+            event = tuple([delta_time, 0xFF, meta_command, meta_length]+meta_data)
+            events.append(event)
+        if b >= 0xF0:
+            event = tuple([delta_time, b])
+        elif b&0x80:
             current_command = b>>4
             current_channel = b&0xF
+            data = stream.read(data_length[current_command],0)
+            event = tuple([delta_time, current_command, current_channel]+data)
+            events.append(event)
         else:
             more_data = data_length[current_command]-1
-            if more_data == 1:
-                data = [b,stream.read()]
-            else:
-                data = [b] + stream.read(more_data)
-            event = tuple([current_channel, current_command]+data)
+            data = [b] + stream.read(more_data, 0)
+            event = tuple([delta_time, current_command, current_channel]+data)
             events.append(event)
     return events
         
@@ -78,7 +87,7 @@ def read_midi(f):
     ticks_per_quarter = ord(header[12])<<8+ord(header[13])
     if not format in [0,1]:
         return None
-    events = []
+    track_events = []
     for i in range(tracks):
         track_header = f.read(8)
         if track_header[0:4] != 'MTrk':
@@ -87,13 +96,64 @@ def read_midi(f):
         data_length = (ord(track_header[4])<<24)+(ord(track_header[5])<<16)\
                       +(ord(track_header[6])<<8)+ord(track_header[7])
         data = readable_stream(map(lambda x:ord(x), f.read(data_length)))
-        print(extract_midi_events(data)[:20])
+        track_events.append(extract_midi_events(data))
         
         
-    return events
-    
+    return track_events
 
-for name in sys.argv[1:]:
+argc = len(sys.argv)
+option_count = 1
+filter_for_keys = 0
+just_notes = 0
+while (option_count < argc) and (sys.argv[option_count].startswith("--")):
+    option = sys.argv[option_count]
+    option_count += 1;
+    if option == "--":
+        break
+    if option == "--keys":
+        filter_for_keys = 1
+    if option == "--notes":
+        just_notes = 1
+        filter_for_keys = 1
+
+def filter_key_events(events):
+    return filter(lambda x: x[1] in [8,9], events)
+
+def process_note_events(events):
+    start_times = {}
+    notes = []
+    for event in events:
+        t, cmd, ch, key, velocity = event
+        if cmd == 9: #on
+            idx = tuple([ch, key])
+            if not idx in start_times:
+                start_times[idx] = t
+        elif cmd == 8: #off
+            idx = tuple([ch, key])
+            if idx in start_times:
+                t0 = start_times.pop(idx)
+                notes.append(tuple([t0, t, ch, key]))
+            else:
+                print("Missing", idx)
+    return notes
+
+for name in sys.argv[option_count:]:
     with open(name, "rb") as f:
         midi = read_midi(f)
-        print("midi=",midi)
+        if filter_for_keys:
+            midi = map(filter_key_events, midi)
+        if just_notes:
+            events = []
+            for track in midi:
+                events.extend(track)
+            events.sort()
+            events = process_note_events(events)
+            for line in events:
+                print(", ".join(map(lambda x:str(x), line)))
+        else:
+            track_nbr = 0
+            for track in midi:
+                for line in track:
+                    print(", ".join([str(track_nbr)]+map(lambda x:str(x), line)))
+                track_nbr += 1
+                
