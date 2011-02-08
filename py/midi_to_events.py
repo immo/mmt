@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # coding:utf-8
 # python version=2.7
+
+# Format for notes: start(delta), stop(delta), channel, key, start(beat), length(beat)
+
+
 from __future__ import print_function
 import sys
 
