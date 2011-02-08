@@ -84,7 +84,7 @@ def read_midi(f):
         return None
     format = (ord(header[8])<<8)+ord(header[9]);
     tracks = (ord(header[10])<<8)+ord(header[11]);
-    ticks_per_quarter = ord(header[12])<<8+ord(header[13])
+    ticks_per_quarter = (ord(header[12])<<8)+ord(header[13])
     if not format in [0,1]:
         return None
     track_events = []
@@ -99,12 +99,13 @@ def read_midi(f):
         track_events.append(extract_midi_events(data))
         
         
-    return track_events
+    return track_events, float(ticks_per_quarter)
 
 argc = len(sys.argv)
 option_count = 1
 filter_for_keys = 0
 just_notes = 0
+graceful = 0
 while (option_count < argc) and (sys.argv[option_count].startswith("--")):
     option = sys.argv[option_count]
     option_count += 1;
@@ -115,6 +116,8 @@ while (option_count < argc) and (sys.argv[option_count].startswith("--")):
     if option == "--notes":
         just_notes = 1
         filter_for_keys = 1
+    if option == "--graceful":
+        graceful = 1
 
 def filter_key_events(events):
     return filter(lambda x: x[1] in [8,9], events)
@@ -134,12 +137,15 @@ def process_note_events(events):
                 t0 = start_times.pop(idx)
                 notes.append(tuple([t0, t, ch, key]))
             else:
-                print("Missing", idx)
+                notes.append(tuple([-1, t, ch, key]))
+    for pair in start_times:
+        ch, key = pair
+        notes.append(tuple([start_times[pair], -1, ch, key]))
     return notes
 
 for name in sys.argv[option_count:]:
     with open(name, "rb") as f:
-        midi = read_midi(f)
+        midi, ticks_per_quarter = read_midi(f)
         if filter_for_keys:
             midi = map(filter_key_events, midi)
         if just_notes:
@@ -148,12 +154,18 @@ for name in sys.argv[option_count:]:
                 events.extend(track)
             events.sort()
             events = process_note_events(events)
+            if graceful:
+                events = filter(lambda x: (x[0]!=-1) and (x[1]!=-1),events)
             for line in events:
-                print(", ".join(map(lambda x:str(x), line)))
+                print(", ".join(map(lambda x:str(x), line)+\
+                                [str(line[0]/ticks_per_quarter),\
+                                 str((line[1]-line[0])/ticks_per_quarter)]))
         else:
             track_nbr = 0
             for track in midi:
                 for line in track:
-                    print(", ".join([str(track_nbr)]+map(lambda x:str(x), line)))
+                    print(", ".join([str(track_nbr)]+\
+                                    map(lambda x:str(x), line)+\
+                                    [str(l[0]/ticks_per_quarter)]))
                 track_nbr += 1
                 
