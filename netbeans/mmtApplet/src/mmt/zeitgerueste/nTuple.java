@@ -22,6 +22,13 @@ public class nTuple<T> implements Comparable {
         this.tuple = tuple;
     }
 
+    public nTuple(Iterator<T> data) {
+        this.tuple = new ArrayList<T>();
+        while (data.hasNext()) {
+            this.tuple.add(data.next());
+        }
+    }
+
     public nTuple(T[] tuple) {
         this.tuple = new ArrayList<T>(tuple.length);
         for (int i=0;i<tuple.length;++i) {

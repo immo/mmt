@@ -15,13 +15,13 @@ import java.util.logging.Logger;
  */
 public class chronologie implements Comparable {
 
-    private Set<nTuple<Integer>> relation;
-    private Set<nTuple<Integer>> neighborhood_relation;
-    private Map<Integer, Set<Integer>> ideals;
-    private Map<Integer, Set<Integer>> filters;
-    private Map<Integer, Set<Integer>> upper_neighbors;
-    private Map<Integer, Set<Integer>> lower_neighbors;
-    private Map<nTuple<Integer>, Integer> longest_up_path;
+    protected Set<nTuple<Integer>> relation;
+    protected Set<nTuple<Integer>> neighborhood_relation;
+    protected Map<Integer, Set<Integer>> ideals;
+    protected Map<Integer, Set<Integer>> filters;
+    protected Map<Integer, Set<Integer>> upper_neighbors;
+    protected Map<Integer, Set<Integer>> lower_neighbors;
+    protected Map<nTuple<Integer>, Integer> longest_up_path;
 
     public chronologie() {
         relation = new TreeSet<nTuple<Integer>>();
@@ -153,6 +153,12 @@ public class chronologie implements Comparable {
 
     public boolean isLowerNeighbor(nTuple<Integer> pair) {
         return neighborhood_relation.contains(pair);
+    }
+
+    public boolean isParallel(int x, int y) {
+        if (x==y)
+            return false;
+        return !(isLess(x,y)||isLess(y,x));
     }
 
     public Set<Integer> getFilter(int x) {
