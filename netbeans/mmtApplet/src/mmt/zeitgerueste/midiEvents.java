@@ -111,7 +111,7 @@ public class midiEvents {
         System.out.println("Generating zeitgeruest...");
         zeitgeruest z = evts.generateZeitgeruest();
         System.out.println("done.");
-        System.out.println(z.X.neighborhood_relation);
+        System.out.println(z.X.longest_up_path);
         
         
         

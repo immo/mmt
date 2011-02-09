@@ -405,43 +405,92 @@ public class chronologie implements Comparable {
         this.neighborhood_relation = neighborhood;
         this.relation = closure;
 
-        this.longest_up_path = new HashMap<nTuple<Integer>, Integer>();
 
-        Iterator<Integer> sit = this.filters.keySet().iterator();
-        while (sit.hasNext()) {
-            Integer s = sit.next();
-            Iterator<Integer> tit = this.filters.get(s).iterator();
-            while (tit.hasNext()) {
-                Integer t = tit.next();
-                if (!s.equals(t)) {
-                    this.longest_up_path.put(new nTuple<Integer>(s, t), 1);
-                }
-            }
+
+        this.longest_up_path = new TreeMap<nTuple<Integer>, Integer>();
+        
+        /* better than below?? */
+
+         Iterator<nTuple<Integer>> pit = this.neighborhood_relation.iterator();
+        while (pit.hasNext()) {
+            nTuple<Integer> pair = pit.next();
+            
+            this.longest_up_path.put(pair, 1);
         }
 
-        boolean checkAgain = true;
+        Set<nTuple<Integer>> got_better = new TreeSet<nTuple<Integer>>
+                (this.neighborhood_relation);
 
-        while (checkAgain) {
-            checkAgain = false;
-            sit = this.filters.keySet().iterator();
-            while (sit.hasNext()) {
-                Integer s = sit.next();
-                Set<Integer> sf = this.filters.get(s);
-                Iterator<nTuple<Integer>> current = this.longest_up_path.keySet().iterator();
-                while (current.hasNext()) {
-                    nTuple<Integer> pair = current.next();
-                    if ((pair.get(0) != s) && sf.contains(pair.get(0))) {
-                        Integer lengthVia = 1 + this.longest_up_path.get(pair);
-                        nTuple<Integer> via = new nTuple<Integer>(s, pair.get(1));
-                        if (lengthVia > this.longest_up_path.get(via)) {
-                            this.longest_up_path.put(via, lengthVia);
-                            checkAgain = true;
+
+        while (!got_better.isEmpty()) {
+            
+            Set<nTuple<Integer>> keyset = new TreeSet<nTuple<Integer>>
+                        (got_better);
+            got_better = new TreeSet<nTuple<Integer>>();
+
+            pit = keyset.iterator();
+            while (pit.hasNext()) {
+                nTuple<Integer> pair = pit.next();
+                Integer l = pair.get(0);
+                Integer h = pair.get(1);
+                Integer length = this.longest_up_path.get(pair);
+                if (!this.upper_neighbors.containsKey(h)) continue;
+                Iterator<Integer> nit = this.upper_neighbors.get(h).iterator();
+                while (nit.hasNext()) {
+                    Integer hh = nit.next();
+                    nTuple<Integer> npair = new nTuple<Integer>(l,hh);
+                    if (!this.longest_up_path.containsKey(npair)) {
+                        this.longest_up_path.put(npair,length+1);
+                        got_better.add(npair);
+                    } else {
+                        if (this.longest_up_path.get(npair)<=length) {
+                            this.longest_up_path.put(npair,length+1);
+                            got_better.add(npair);
 
                         }
                     }
                 }
             }
         }
+
+      /* this may not be the smartes way to calculate the longest-up-paths */
+
+//
+//        Iterator<Integer> sit = this.filters.keySet().iterator();
+//        while (sit.hasNext()) {
+//            Integer s = sit.next();
+//            Iterator<Integer> tit = this.filters.get(s).iterator();
+//            while (tit.hasNext()) {
+//                Integer t = tit.next();
+//                if (!s.equals(t)) {
+//                    this.longest_up_path.put(new nTuple<Integer>(s, t), 1);
+//                }
+//            }
+//        }
+//
+//        boolean checkAgain = true;
+//
+//        while (checkAgain) {
+//            checkAgain = false;
+//            sit = this.filters.keySet().iterator();
+//            while (sit.hasNext()) {
+//                Integer s = sit.next();
+//                Set<Integer> sf = this.filters.get(s);
+//                Iterator<nTuple<Integer>> current = this.longest_up_path.keySet().iterator();
+//                while (current.hasNext()) {
+//                    nTuple<Integer> pair = current.next();
+//                    if ((pair.get(0) != s) && sf.contains(pair.get(0))) {
+//                        Integer lengthVia = 1 + this.longest_up_path.get(pair);
+//                        nTuple<Integer> via = new nTuple<Integer>(s, pair.get(1));
+//                        if (lengthVia > this.longest_up_path.get(via)) {
+//                            this.longest_up_path.put(via, lengthVia);
+//                            checkAgain = true;
+//
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
     }
 
