@@ -45,7 +45,7 @@ public class zeitgeruest implements Comparable {
         this.T = new ArrayList<traeger>();
         for (Iterator it = annotations.iterator(); it.hasNext();) {
             traeger t = new traeger();
-            t.addAnotation(it.next());
+            t.addAnnotation(it.next());
             this.T.add(t);
         }
         X = new chronologie();
@@ -55,11 +55,80 @@ public class zeitgeruest implements Comparable {
         this.T = new ArrayList<traeger>();
         for (int i = 0; i < annotations.length; ++i) {
             traeger t = new traeger();
-            t.addAnotation(annotations[i]);
+            t.addAnnotation(annotations[i]);
             this.T.add(t);
         }
         X = new chronologie();
     }
+
+    public Map<Integer, Set<Object>> flatCountAnnotationsInverse() {
+        Map<Object, Integer> annotations = flatCountAnnotations();
+        Map<Integer,Set<Object>> inverse = new TreeMap<Integer,Set<Object>>();
+        Iterator<Object> it = annotations.keySet().iterator();
+        while (it.hasNext()) {
+            Object o = it.next();
+            Integer count = annotations.get(o);
+            if (!inverse.containsKey(count)) {
+                inverse.put(count, new HashSet<Object>());
+            }
+            inverse.get(count).add(o);
+        }
+        return inverse;
+    }
+
+    public Map<Object, Integer> flatCountAnnotations() {
+        Map<Object, Integer> annotations = new HashMap<Object, Integer>();
+        Iterator<traeger> it = this.T.iterator();
+        while (it.hasNext()) {
+            Iterator<Object> at = it.next().getAnnotationSet().iterator();
+            while (at.hasNext()) {
+                Object o = at.next();
+                if (annotations.containsKey(o)) {
+                    annotations.put(o, annotations.get(o)+1);
+                } else {
+                    annotations.put(o,1);
+                }
+            }
+        }
+        return annotations;
+    }
+
+    public Integer getTWeight(int i) {
+        return T.size() - X.getComparableCount(i);
+    }
+
+    public Map<Integer, Set<Object>> weightedCountAnnotationsInverse() {
+        Map<Object, Integer> annotations = weightedCountAnnotations();
+        Map<Integer,Set<Object>> inverse = new TreeMap<Integer,Set<Object>>();
+        Iterator<Object> it = annotations.keySet().iterator();
+        while (it.hasNext()) {
+            Object o = it.next();
+            Integer count = annotations.get(o);
+            if (!inverse.containsKey(count)) {
+                inverse.put(count, new HashSet<Object>());
+            }
+            inverse.get(count).add(o);
+        }
+        return inverse;
+    }
+
+    public Map<Object, Integer> weightedCountAnnotations() {
+        Map<Object, Integer> annotations = new HashMap<Object, Integer>();
+        Integer s = this.T.size();
+        for (Integer i=0;i<s;++i) {
+            Iterator<Object> at = this.T.get(i).getAnnotationSet().iterator();
+            while (at.hasNext()) {
+                Object o = at.next();
+                if (annotations.containsKey(o)) {
+                    annotations.put(o, annotations.get(o)+getTWeight(i));
+                } else {
+                    annotations.put(o,getTWeight(i));
+                }
+            }
+        }
+        return annotations;
+    }
+
 
     @Override
     protected Object clone() throws CloneNotSupportedException {

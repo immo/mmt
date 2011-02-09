@@ -17,9 +17,11 @@ public class traeger {
         annotations = new ArrayList<Object>();
     }
 
+    public Set<Object> getAnnotationSet() {
+        return new HashSet<Object>(this.annotations);
+    }
 
-
-    public void addAnotation(Object o) {
+    public void addAnnotation(Object o) {
         annotations.add(o);
     }
 

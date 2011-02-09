@@ -131,6 +131,10 @@ public class chronologie implements Comparable {
         return neighborhood_relation.size();
     }
 
+    public Integer getComparableCount(int x) {
+        return this.getFilter(x).size() + this.getIdeal(x).size();
+    }
+
     public Integer getLongestUpPathLength(int x, int y) {
         nTuple<Integer> t = new nTuple<Integer>(x, y);
         if (longest_up_path.containsKey(t)) {

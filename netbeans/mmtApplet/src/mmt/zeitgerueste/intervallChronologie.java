@@ -11,9 +11,9 @@ import java.util.*;
  *
  * @author immanuel
  */
-public class intervalChronologie extends chronologie {
+public class intervallChronologie extends chronologie {
 
-    public intervalChronologie(ArrayList a, ArrayList b) {
+    public intervallChronologie(ArrayList a, ArrayList b) {
         /* i < j iff b(i).compareTo(a(j)) <= 0 */
         TreeMap<nTuple<Comparable>, Set<Integer>> map = new TreeMap<nTuple<Comparable>, Set<Integer>>();
 
@@ -168,7 +168,7 @@ public class intervalChronologie extends chronologie {
         b.add(3);
         a.add(4);
         b.add(5);
-        intervalChronologie iz = new intervalChronologie(a, b);
+        intervallChronologie iz = new intervallChronologie(a, b);
         System.out.println(iz.neighborhood_relation);
         System.out.println(iz.longest_up_path);
     }

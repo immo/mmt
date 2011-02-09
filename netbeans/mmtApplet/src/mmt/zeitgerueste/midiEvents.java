@@ -86,11 +86,13 @@ public class midiEvents {
         Iterator<Integer> ii = key_code.iterator();
         int idx =0;
         while (ii.hasNext()) {
-            z.T.get(idx).addAnotation(keyName(ii.next()));
+            Integer keycode = ii.next();
+            z.T.get(idx).addAnnotation(keyName(keycode));
+            z.T.get(idx).addAnnotation(keyClassName(keycode));
             ++idx;
         }
 
-        z.X = new intervalChronologie(start_time, end_time);
+        z.X = new intervallChronologie(start_time, end_time);
         
 
         return z;
@@ -103,6 +105,10 @@ public class midiEvents {
         return noteNames[code%12] + (code/12 -1);
     }
 
+    public static String keyClassName(Integer code) {
+        return noteNames[code%12];
+    }
+
 
     public static void main(String args[])
             throws java.io.IOException, java.io.FileNotFoundException {
@@ -111,7 +117,8 @@ public class midiEvents {
         System.out.println("Generating zeitgeruest...");
         zeitgeruest z = evts.generateZeitgeruest();
         System.out.println("done.");
-        System.out.println(z.X.longest_up_path);
+        System.out.println("flat= "+z.flatCountAnnotationsInverse());
+        System.out.println("weighted= "+z.weightedCountAnnotationsInverse());
         
         
         
