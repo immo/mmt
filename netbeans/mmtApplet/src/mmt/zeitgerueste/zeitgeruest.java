@@ -112,6 +112,21 @@ public class zeitgeruest implements Comparable {
         return inverse;
     }
 
+    public Map<Integer, Set<Object>> weightedNthCountAnnotationsInverse(int n) {
+        Map<Object, Integer> annotations = weightedNthCountAnnotation(n);
+        Map<Integer,Set<Object>> inverse = new TreeMap<Integer,Set<Object>>();
+        Iterator<Object> it = annotations.keySet().iterator();
+        while (it.hasNext()) {
+            Object o = it.next();
+            Integer count = annotations.get(o);
+            if (!inverse.containsKey(count)) {
+                inverse.put(count, new HashSet<Object>());
+            }
+            inverse.get(count).add(o);
+        }
+        return inverse;
+    }
+
     public Map<Object, Integer> weightedCountAnnotations() {
         Map<Object, Integer> annotations = new HashMap<Object, Integer>();
         Integer s = this.T.size();
@@ -119,6 +134,22 @@ public class zeitgeruest implements Comparable {
             Iterator<Object> at = this.T.get(i).getAnnotationSet().iterator();
             while (at.hasNext()) {
                 Object o = at.next();
+                if (annotations.containsKey(o)) {
+                    annotations.put(o, annotations.get(o)+getTWeight(i));
+                } else {
+                    annotations.put(o,getTWeight(i));
+                }
+            }
+        }
+        return annotations;
+    }
+
+    public Map<Object, Integer> weightedNthCountAnnotation(int n) {
+        Map<Object, Integer> annotations = new HashMap<Object, Integer>();
+        Integer s = this.T.size();
+        for (Integer i=0;i<s;++i) {
+            if (this.T.get(i).annotations.size()>n) {
+                Object o = this.T.get(i).annotations.get(n);
                 if (annotations.containsKey(o)) {
                     annotations.put(o, annotations.get(o)+getTWeight(i));
                 } else {
@@ -440,6 +471,69 @@ public class zeitgeruest implements Comparable {
         return getDotCode(true, "v", "", "");
     }
 
+    public void writeToDotFile2(String filename) throws IOException {
+        Map<Object, Float> label_to_greyscale = new HashMap<Object,Float>();
+
+        Map<Integer,Set<Object>> weighted = weightedNthCountAnnotationsInverse(1);
+
+        Iterator<Integer> inti = weighted.keySet().iterator();
+        Integer lowest = 0;
+        Integer highest = 0;
+        if (inti.hasNext()) {
+            lowest = inti.next();
+            highest = lowest+1;
+        }
+        while (inti.hasNext()) {
+            highest = inti.next();
+        }
+
+        inti = weighted.keySet().iterator();
+        while (inti.hasNext()) {
+            Integer nbr = inti.next();
+            label_to_greyscale.put(weighted.get(nbr).iterator().next(),
+                    (new Float(nbr-lowest))/(new Float(highest-lowest)));
+        }
+
+
+        FileWriter file = new FileWriter(filename);
+        file.write("digraph g{\n graph[bgcolor=black];\n");
+        Integer t_size = T.size();
+
+        for (Integer i=0;i<t_size;++i) {
+            if (i%64==0) {
+                file.flush();
+                System.out.print(".");
+            }
+            file.write(" v"+i+"[label=\""+T.get(i).annotations.get(0)
+                    +"\" color=\""
+                     + (0.1666 - 0.1666*label_to_greyscale.get(T.get(i).annotations.get(1)))
+                    +" 1.0 0.8\" shape=\"point\" width=\"0.06\"];\n");
+        }
+
+        Integer counter = 0;
+
+        Iterator<nTuple<Integer>> it = X.getNeighbors().iterator();
+        while (it.hasNext()) {
+            nTuple<Integer> edge = it.next();
+
+            file.write(" v"+edge.get(0)+" -> v"+edge.get(1)+" [arrowsize=0.25 color=\""+
+                    (0.1666 - 0.1666*label_to_greyscale.get(T.get(edge.get(1)).annotations.get(1)))
+                    +" 1.0 0.85\" weigth=\""+
+                    (0.4+0.4*label_to_greyscale.get(T.get(edge.get(1)).annotations.get(1))+
+                    0.2*label_to_greyscale.get(T.get(edge.get(0)).annotations.get(1)))+"\"];\n");
+            ++counter;
+            if (counter >= 64) {
+                counter = 0;
+                file.flush();
+                System.out.print(".");
+            }
+        }
+
+        file.write("}\n");
+
+        file.close();
+    }
+
     public String getDotCode(boolean with_headers, String node_prefix, String node_ops, String arrow_ops) {
         String dot = "";
         if (with_headers) {
@@ -467,6 +561,8 @@ public class zeitgeruest implements Comparable {
 
         return dot;
     }
+
+
 
     public String getGraphML() {
         return getGraphML(true, "v");
