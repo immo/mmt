@@ -120,6 +120,8 @@ public class midiEvents {
         System.out.println("done.");
         System.out.println("flat= "+z.flatCountAnnotationsInverse());
         System.out.println("weighted= "+z.weightedCountAnnotationsInverse());
+
+        z.writeToDotFile("/tmp/33.dot");
         
         
         
