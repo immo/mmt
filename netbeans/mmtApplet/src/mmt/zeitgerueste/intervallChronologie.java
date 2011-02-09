@@ -94,54 +94,63 @@ public class intervallChronologie extends chronologie {
 
         }
 
-        this.longest_up_path = new TreeMap<nTuple<Integer>,Integer>();
+        this.longest_up_path = new TreeMap<nTuple<Integer>, Integer>();
 
-        Iterator<nTuple<Integer>> pit = this.neighborhood_relation.iterator();
-        while (pit.hasNext()) {
-            nTuple<Integer> pair = pit.next();
-            Integer l = pair.get(0);
-            Integer h = pair.get(1);
-            if (!this.upper_neighbors.containsKey(l)) {
-                this.upper_neighbors.put(l, new TreeSet<Integer>());
-            }
-            if (!this.lower_neighbors.containsKey(h)) {
-                this.lower_neighbors.put(h, new TreeSet<Integer>());
-            }
-            this.upper_neighbors.get(l).add(h);
-            this.lower_neighbors.get(h).add(l);
-            this.longest_up_path.put(pair, 1);
-        }
+        if (this.neighborhood_relation.size() > 1000) {
+            this.longest_paths_available = false;
 
-        Set<nTuple<Integer>> got_better = new TreeSet<nTuple<Integer>>(this.neighborhood_relation);
+        } else {
+            this.longest_paths_available = true;
 
-        
-        while (!got_better.isEmpty()) {
-            Set<nTuple<Integer>> keyset = new TreeSet<nTuple<Integer>>
-                        (got_better);
-            got_better = new TreeSet<nTuple<Integer>>();
-            
-            pit = keyset.iterator();
+
+            Iterator<nTuple<Integer>> pit = this.neighborhood_relation.iterator();
             while (pit.hasNext()) {
                 nTuple<Integer> pair = pit.next();
                 Integer l = pair.get(0);
                 Integer h = pair.get(1);
-                Integer length = this.longest_up_path.get(pair);
-                if (!this.upper_neighbors.containsKey(h)) continue;
-                Iterator<Integer> nit = this.upper_neighbors.get(h).iterator();
-                while (nit.hasNext()) {
-                    Integer hh = nit.next();
-                    nTuple<Integer> npair = new nTuple<Integer>(l,hh);
-                    if (!this.longest_up_path.containsKey(npair)) {
-                        this.longest_up_path.put(npair,length+1);
-                        got_better.add(npair);
-                    } else {
-                        if (this.longest_up_path.get(npair)<=length) {
-                            this.longest_up_path.put(npair,length+1);
-                            got_better.add(npair);
+                if (!this.upper_neighbors.containsKey(l)) {
+                    this.upper_neighbors.put(l, new TreeSet<Integer>());
+                }
+                if (!this.lower_neighbors.containsKey(h)) {
+                    this.lower_neighbors.put(h, new TreeSet<Integer>());
+                }
+                this.upper_neighbors.get(l).add(h);
+                this.lower_neighbors.get(h).add(l);
+                this.longest_up_path.put(pair, 1);
+            }
 
+            Set<nTuple<Integer>> got_better = new TreeSet<nTuple<Integer>>(this.neighborhood_relation);
+
+
+            while (!got_better.isEmpty()) {
+                Set<nTuple<Integer>> keyset = new TreeSet<nTuple<Integer>>(got_better);
+                got_better = new TreeSet<nTuple<Integer>>();
+
+                pit = keyset.iterator();
+                while (pit.hasNext()) {
+                    nTuple<Integer> pair = pit.next();
+                    Integer l = pair.get(0);
+                    Integer h = pair.get(1);
+                    Integer length = this.longest_up_path.get(pair);
+                    if (!this.upper_neighbors.containsKey(h)) {
+                        continue;
+                    }
+                    Iterator<Integer> nit = this.upper_neighbors.get(h).iterator();
+                    while (nit.hasNext()) {
+                        Integer hh = nit.next();
+                        nTuple<Integer> npair = new nTuple<Integer>(l, hh);
+                        if (!this.longest_up_path.containsKey(npair)) {
+                            this.longest_up_path.put(npair, length + 1);
+                            got_better.add(npair);
+                        } else {
+                            if (this.longest_up_path.get(npair) <= length) {
+                                this.longest_up_path.put(npair, length + 1);
+                                got_better.add(npair);
+
+                            }
                         }
                     }
-                }                
+                }
             }
         }
 

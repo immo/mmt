@@ -112,6 +112,7 @@ public class midiEvents {
 
     public static void main(String args[])
             throws java.io.IOException, java.io.FileNotFoundException {
+        System.out.println("heap size="+Runtime.getRuntime().maxMemory());
         System.out.println("Testing midi events class...");
         midiEvents evts = new midiEvents("/home/immanuel/git/l.jython/data/stpaul_33.events");
         System.out.println("Generating zeitgeruest...");
