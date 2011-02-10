@@ -175,9 +175,9 @@ public class chronologischeAbbildung implements Comparable {
     }
 
     public boolean isPartialWeaklyMonotone() {
-        Iterator<nTuple<Integer>> it = source.X.getNeighbors().iterator();
+        Iterator<intPair> it = source.X.getNeighbors().iterator();
         while (it.hasNext()) {
-            nTuple<Integer> pair = it.next();
+            intPair pair = it.next();
             int s = pair.get(0);
             int t = pair.get(1);
 
@@ -193,9 +193,9 @@ public class chronologischeAbbildung implements Comparable {
     }
 
     public boolean isPartialWeaklyMonotone(Integer onlyThisPreimage) {
-        Iterator<nTuple<Integer>> it = source.X.getNeighbors().iterator();
+        Iterator<intPair> it = source.X.getNeighbors().iterator();
         while (it.hasNext()) {
-            nTuple<Integer> pair = it.next();
+            intPair pair = it.next();
             int s = pair.get(0);
             int t = pair.get(1);
 
@@ -291,7 +291,7 @@ public class chronologischeAbbildung implements Comparable {
             fibers.get(fs).add(s);
         }
 
-        Map<nTuple<Integer>, Boolean> isRectangle = new HashMap<nTuple<Integer>, Boolean>();
+        Map<intPair, Boolean> isRectangle = new HashMap<intPair, Boolean>();
 
         it = fibers.keySet().iterator();
 
@@ -314,15 +314,15 @@ public class chronologischeAbbildung implements Comparable {
                         }
                     }
                 }
-                isRectangle.put(new nTuple<Integer>(x, y), !counterExample);
+                isRectangle.put(new intPair(x, y), !counterExample);
             }
         }
 
-        Iterator<nTuple<Integer>> pairs = isRectangle.keySet().iterator();
+        Iterator<intPair> pairs = isRectangle.keySet().iterator();
 
 
         while (pairs.hasNext()) {
-            nTuple<Integer> pair = pairs.next();
+            intPair pair = pairs.next();
 
             if (target.X.isLess(pair) != isRectangle.get(pair)) {
                 return false;

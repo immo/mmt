@@ -24,6 +24,10 @@ public class intPair implements Comparable {
         return p;
     }
 
+    boolean inDelta() {
+        return this.p == this.q;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -53,6 +57,16 @@ public class intPair implements Comparable {
             return this.q - o.q;
         }
         return this.p - o.p;
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return new intPair(p, q);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + this.p + ", " + this.q +")";
     }
 
 

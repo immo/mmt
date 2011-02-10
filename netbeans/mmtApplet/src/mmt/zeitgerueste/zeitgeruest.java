@@ -180,10 +180,10 @@ public class zeitgeruest implements Comparable {
     }
 
     public boolean addPairs(int[] inline_pairs) {
-        Set<nTuple<Integer>> pairs = new HashSet<nTuple<Integer>>();
+        Set<intPair> pairs = new HashSet<intPair>();
 
         for (int i = 0; i < inline_pairs.length; i += 2) {
-            pairs.add(new nTuple<Integer>(inline_pairs[i], inline_pairs[i + 1]));
+            pairs.add(new intPair(inline_pairs[i], inline_pairs[i + 1]));
         }
 
         return this.X.addPairs(pairs);
@@ -212,9 +212,9 @@ public class zeitgeruest implements Comparable {
             zeitgeruest z = it.next();
 
 
-            Iterator<nTuple<Integer>> pair = z.possibleNewNeighborPairs().iterator();
+            Iterator<intPair> pair = z.possibleNewNeighborPairs().iterator();
             while (pair.hasNext()) {
-                nTuple<Integer> s_t = pair.next();
+                intPair s_t = pair.next();
 
                 zeitgeruest z2 = null;
                 try {
@@ -407,12 +407,12 @@ public class zeitgeruest implements Comparable {
         return maps;
     }
 
-    public Set<nTuple<Integer>> possibleNewNeighborPairs() {
+    public Set<intPair> possibleNewNeighborPairs() {
         return possibleNewNeighborPairs(true);
     }
 
-    public Set<nTuple<Integer>> possibleNewNeighborPairs(boolean smartForIsoClasses) {
-        Set<nTuple<Integer>> pairs = new HashSet<nTuple<Integer>>();
+    public Set<intPair> possibleNewNeighborPairs(boolean smartForIsoClasses) {
+        Set<intPair> pairs = new HashSet<intPair>();
 
         Integer size = T.size();
         if (smartForIsoClasses) {
@@ -432,8 +432,8 @@ public class zeitgeruest implements Comparable {
                     Set<Integer> intersection = new HashSet<Integer>(X.getFilter(h));
                     intersection.retainAll(X.getFilter(l));
                     if (intersection.isEmpty()) { //No triangles
-                        pairs.add(new nTuple<Integer>(l, h));
-                        pairs.add(new nTuple<Integer>(h, l));
+                        pairs.add(new intPair(l, h));
+                        pairs.add(new intPair(h, l));
                     }
                 }
 
@@ -451,9 +451,9 @@ public class zeitgeruest implements Comparable {
         }
         rep += "Neighbors: \n";
         int count = 0;
-        Iterator<nTuple<Integer>> it = X.getNeighbors().iterator();
+        Iterator<intPair> it = X.getNeighbors().iterator();
         while (it.hasNext()) {
-            nTuple<Integer> pair = it.next();
+            intPair pair = it.next();
             if (count > 0) {
                 if (count % 6 == 0) {
                     rep += "\n";
@@ -512,9 +512,9 @@ public class zeitgeruest implements Comparable {
 
         Integer counter = 0;
 
-        Iterator<nTuple<Integer>> it = X.getNeighbors().iterator();
+        Iterator<intPair> it = X.getNeighbors().iterator();
         while (it.hasNext()) {
-            nTuple<Integer> edge = it.next();
+            intPair edge = it.next();
 
             file.write(" v"+edge.get(0)+" -> v"+edge.get(1)+" [arrowsize=0.25 color=\""+
                     (0.1666 - 0.1666*label_to_greyscale.get(T.get(edge.get(1)).annotations.get(1)))
@@ -545,9 +545,9 @@ public class zeitgeruest implements Comparable {
             dot += node_prefix + i + "[label=\"\" shape=\"point\" " + node_ops + "];\n";
         }
 
-        Iterator<nTuple<Integer>> it = X.getNeighbors().iterator();
+        Iterator<intPair> it = X.getNeighbors().iterator();
         while (it.hasNext()) {
-            nTuple<Integer> edge = it.next();
+            intPair edge = it.next();
             if (arrow_ops.length() > 0) {
                 dot += node_prefix + edge.get(0) + " -> " + node_prefix + edge.get(1) + "[" + arrow_ops + "];\n";
             } else {
@@ -583,9 +583,9 @@ public class zeitgeruest implements Comparable {
                     + i + "</y:NodeLabel>\n          <y:Shape type=\"ellipse\"/>\n        </y:ShapeNode>\n      </data>"
                     + "\n  </node>";
         }
-        Iterator<nTuple<Integer>> it = X.getNeighbors().iterator();
+        Iterator<intPair> it = X.getNeighbors().iterator();
         while (it.hasNext()) {
-            nTuple<Integer> edge = it.next();
+            intPair edge = it.next();
             gml += "\n  <edge source=\"" + node_prefix + edge.get(0) + "\" target=\"" + node_prefix + edge.get(1) + "\">"
                     + "\n     <data key=\"d7\">\n        <y:QuadCurveEdge straightness=\"0.1\">\n          <y:Path sx=\"0.0\" sy=\"0.0\" tx=\"0.0\" ty=\"0.0\"/>\n          <y:LineStyle color=\"#000000\" type=\"line\" width=\"1.0\"/>\n          <y:Arrows source=\"none\" target=\"standard\"/>\n        </y:QuadCurveEdge>\n      </data>"
                     + "\n  </edge>";

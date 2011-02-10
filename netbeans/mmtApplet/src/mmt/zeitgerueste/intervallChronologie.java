@@ -43,7 +43,7 @@ public class intervallChronologie extends chronologie {
                         Iterator<Integer> ri = r.iterator();
                         Integer lint = li.next();
                         while (ri.hasNext()) {
-                            this.relation.add(new nTuple<Integer>(lint, ri.next()));
+                            this.relation.add(new intPair(lint, ri.next()));
                         }
                     }
 
@@ -78,7 +78,7 @@ public class intervallChronologie extends chronologie {
                             ri = r.iterator();
                             Integer lint = li.next();
                             while (ri.hasNext()) {
-                                this.neighborhood_relation.add(new nTuple<Integer>(lint, ri.next()));
+                                this.neighborhood_relation.add(new intPair(lint, ri.next()));
                             }
                         }
                     }
@@ -94,7 +94,7 @@ public class intervallChronologie extends chronologie {
 
         }
 
-        this.longest_up_path = new TreeMap<nTuple<Integer>, Integer>();
+        this.longest_up_path = new TreeMap<intPair, Integer>();
 
         if (this.neighborhood_relation.size() > 1000) {
             this.longest_paths_available = false;
@@ -103,9 +103,9 @@ public class intervallChronologie extends chronologie {
             this.longest_paths_available = true;
 
 
-            Iterator<nTuple<Integer>> pit = this.neighborhood_relation.iterator();
+            Iterator<intPair> pit = this.neighborhood_relation.iterator();
             while (pit.hasNext()) {
-                nTuple<Integer> pair = pit.next();
+                intPair pair = pit.next();
                 Integer l = pair.get(0);
                 Integer h = pair.get(1);
                 if (!this.upper_neighbors.containsKey(l)) {
@@ -119,16 +119,16 @@ public class intervallChronologie extends chronologie {
                 this.longest_up_path.put(pair, 1);
             }
 
-            Set<nTuple<Integer>> got_better = new TreeSet<nTuple<Integer>>(this.neighborhood_relation);
+            Set<intPair> got_better = new TreeSet<intPair>(this.neighborhood_relation);
 
 
             while (!got_better.isEmpty()) {
-                Set<nTuple<Integer>> keyset = new TreeSet<nTuple<Integer>>(got_better);
-                got_better = new TreeSet<nTuple<Integer>>();
+                Set<intPair> keyset = new TreeSet<intPair>(got_better);
+                got_better = new TreeSet<intPair>();
 
                 pit = keyset.iterator();
                 while (pit.hasNext()) {
-                    nTuple<Integer> pair = pit.next();
+                    intPair pair = pit.next();
                     Integer l = pair.get(0);
                     Integer h = pair.get(1);
                     Integer length = this.longest_up_path.get(pair);
@@ -138,7 +138,7 @@ public class intervallChronologie extends chronologie {
                     Iterator<Integer> nit = this.upper_neighbors.get(h).iterator();
                     while (nit.hasNext()) {
                         Integer hh = nit.next();
-                        nTuple<Integer> npair = new nTuple<Integer>(l, hh);
+                        intPair npair = new intPair(l, hh);
                         if (!this.longest_up_path.containsKey(npair)) {
                             this.longest_up_path.put(npair, length + 1);
                             got_better.add(npair);
@@ -161,7 +161,7 @@ public class intervallChronologie extends chronologie {
 
 //    private Map<Integer, Set<Integer>> upper_neighbors;
 //    private Map<Integer, Set<Integer>> lower_neighbors;
-//    private Map<nTuple<Integer>, Integer> longest_up_path;
+//    private Map<intPair, Integer> longest_up_path;
     }
 
     public static void main(String args[])

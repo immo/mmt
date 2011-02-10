@@ -15,25 +15,25 @@ import java.util.logging.Logger;
  */
 public class chronologie implements Comparable {
 
-    protected Set<nTuple<Integer>> relation;
-    protected Set<nTuple<Integer>> neighborhood_relation;
+    protected Set<intPair> relation;
+    protected Set<intPair> neighborhood_relation;
     protected Map<Integer, Set<Integer>> ideals;
     protected Map<Integer, Set<Integer>> filters;
     protected Map<Integer, Set<Integer>> upper_neighbors;
     protected Map<Integer, Set<Integer>> lower_neighbors;
-    protected Map<nTuple<Integer>, Integer> longest_up_path;
+    protected Map<intPair, Integer> longest_up_path;
     protected boolean longest_paths_available;
 
     public chronologie() {
-        relation = new TreeSet<nTuple<Integer>>();
+        relation = new TreeSet<intPair>();
 
         closeRelation();
     }
 
     public int compareTo(Object o) {
         chronologie other = (chronologie) o;
-        Set<nTuple<Integer>> meetSet = new TreeSet<nTuple<Integer>>();
-        Set<nTuple<Integer>> deltaSet = new TreeSet<nTuple<Integer>>();
+        Set<intPair> meetSet = new TreeSet<intPair>();
+        Set<intPair> deltaSet = new TreeSet<intPair>();
         deltaSet.addAll(neighborhood_relation);
         deltaSet.addAll(other.neighborhood_relation);
         meetSet.addAll(neighborhood_relation);
@@ -42,7 +42,7 @@ public class chronologie implements Comparable {
         if (deltaSet.isEmpty()) {
             return 0;
         } else {
-            nTuple<Integer> first_difference = deltaSet.iterator().next();
+            intPair first_difference = deltaSet.iterator().next();
             if (neighborhood_relation.contains(first_difference)) {
                 return 1;
             }
@@ -79,16 +79,16 @@ public class chronologie implements Comparable {
     @Override
     protected Object clone() throws CloneNotSupportedException {
         chronologie c = new chronologie();
-        /// DOESNT WORK LIKE THAT: c.relation = (Set<nTuple<Integer>>) this.relation.clone();
+        /// DOESNT WORK LIKE THAT: c.relation = (Set<intPair>) this.relation.clone();
 
-        Iterator<nTuple<Integer>> it = relation.iterator();
+        Iterator<intPair> it = relation.iterator();
         while (it.hasNext()) {
-            c.relation.add((nTuple<Integer>) it.next().clone());
+            c.relation.add((intPair) it.next().clone());
         }
 
         it = neighborhood_relation.iterator();
         while (it.hasNext()) {
-            c.neighborhood_relation.add((nTuple<Integer>) it.next().clone());
+            c.neighborhood_relation.add((intPair) it.next().clone());
         }
 
         Iterator<Integer> i = ideals.keySet().iterator();
@@ -117,8 +117,8 @@ public class chronologie implements Comparable {
 
         it = longest_up_path.keySet().iterator();
         while (it.hasNext()) {
-            nTuple<Integer> key = it.next();
-            c.longest_up_path.put((nTuple<Integer>) key.clone(), longest_up_path.get(key));
+            intPair key = it.next();
+            c.longest_up_path.put((intPair) key.clone(), longest_up_path.get(key));
         }
 
         return c;
@@ -136,7 +136,7 @@ public class chronologie implements Comparable {
         if (!this.longest_paths_available) {
             throw new UnsupportedOperationException();
         } else {
-            nTuple<Integer> t = new nTuple<Integer>(x, y);
+            intPair t = new intPair(x, y);
             if (longest_up_path.containsKey(t)) {
                 return longest_up_path.get(t);
             }
@@ -145,18 +145,18 @@ public class chronologie implements Comparable {
     }
 
     public boolean isLess(int x, int y) {
-        return relation.contains(new nTuple<Integer>(x, y));
+        return relation.contains(new intPair(x, y));
     }
 
-    public boolean isLess(nTuple<Integer> pair) {
+    public boolean isLess(intPair pair) {
         return relation.contains(pair);
     }
 
     public boolean isLowerNeighbor(int x, int y) {
-        return neighborhood_relation.contains(new nTuple<Integer>(x, y));
+        return neighborhood_relation.contains(new intPair(x, y));
     }
 
-    public boolean isLowerNeighbor(nTuple<Integer> pair) {
+    public boolean isLowerNeighbor(intPair pair) {
         return neighborhood_relation.contains(pair);
     }
 
@@ -183,7 +183,7 @@ public class chronologie implements Comparable {
         return this.ideals.get(x);
     }
 
-    public Set<nTuple<Integer>> getNeighbors() {
+    public Set<intPair> getNeighbors() {
         return this.neighborhood_relation;
     }
 
@@ -209,7 +209,7 @@ public class chronologie implements Comparable {
         }
         if (!isLess(x, y)) {
             relation = neighborhood_relation;
-            relation.add(new nTuple<Integer>(x, y));
+            relation.add(new intPair(x, y));
             closeRelation();
         }
         return true;
@@ -224,7 +224,7 @@ public class chronologie implements Comparable {
                 int y = it.next();
                 if ((x != y) && (!isLess(x, y))) {
                     calculateClosure = true;
-                    neighborhood_relation.add(new nTuple<Integer>(x, y));
+                    neighborhood_relation.add(new intPair(x, y));
                 }
                 x = y;
             }
@@ -236,11 +236,11 @@ public class chronologie implements Comparable {
         return calculateClosure;
     }
 
-    public boolean addPairs(Set<nTuple<Integer>> pairs) {
+    public boolean addPairs(Set<intPair> pairs) {
         boolean calculateClosure = false;
-        Iterator<nTuple<Integer>> it = pairs.iterator();
+        Iterator<intPair> it = pairs.iterator();
         while (it.hasNext()) {
-            nTuple<Integer> pair = it.next();
+            intPair pair = it.next();
             int x = pair.get(0);
             int y = pair.get(1);
             if ((x != y) && (!isLess(x, y))) {
@@ -261,9 +261,9 @@ public class chronologie implements Comparable {
             return false;
         }
 
-        Iterator<nTuple<Integer>> it = neighborhood_relation.iterator();
+        Iterator<intPair> it = neighborhood_relation.iterator();
         while (it.hasNext()) {
-            nTuple<Integer> pair = it.next();
+            intPair pair = it.next();
             int s = pair.get(0);
             int t = pair.get(1);
 
@@ -277,8 +277,8 @@ public class chronologie implements Comparable {
     }
 
     public void closeRelation() {
-        Set<nTuple<Integer>> closure = new TreeSet<nTuple<Integer>>();
-        Set<nTuple<Integer>> neighborhood = new TreeSet<nTuple<Integer>>();
+        Set<intPair> closure = new TreeSet<intPair>();
+        Set<intPair> neighborhood = new TreeSet<intPair>();
         Map<Integer, Set<Integer>> ideals = new HashMap<Integer, Set<Integer>>();
         Map<Integer, Set<Integer>> filters = new HashMap<Integer, Set<Integer>>();
         Map<Integer, Set<Integer>> non_neighbors = new HashMap<Integer, Set<Integer>>();
@@ -287,9 +287,9 @@ public class chronologie implements Comparable {
         this.filters = new HashMap<Integer, Set<Integer>>();
 
 
-        Iterator<nTuple<Integer>> it = relation.iterator();
+        Iterator<intPair> it = relation.iterator();
         while (it.hasNext()) {
-            nTuple<Integer> pair = it.next();
+            intPair pair = it.next();
             int s = pair.get(0);
             int t = pair.get(1);
             if (!filters.containsKey(t)) {
@@ -351,14 +351,14 @@ public class chronologie implements Comparable {
             Iterator<Integer> git = filters.get(s).iterator();
             while (git.hasNext()) {
                 Integer t = git.next();
-                closure.add(new nTuple<Integer>(s, t));
+                closure.add(new intPair(s, t));
             }
         }
 
         it = closure.iterator();
         while (it.hasNext()) {
-            nTuple<Integer> pair = it.next();
-            if (pair.get(0).equals(pair.get(1))) {
+            intPair pair = it.next();
+            if (pair.inDelta()) {
                 it.remove();
             }
         }
@@ -401,7 +401,7 @@ public class chronologie implements Comparable {
             Iterator<Integer> git = filters.get(s).iterator();
             while (git.hasNext()) {
                 Integer t = git.next();
-                neighborhood.add(new nTuple<Integer>(s, t));
+                neighborhood.add(new intPair(s, t));
                 this.lower_neighbors.get(t).add(s);
             }
         }
@@ -413,28 +413,28 @@ public class chronologie implements Comparable {
 
 
 
-        this.longest_up_path = new TreeMap<nTuple<Integer>, Integer>();
+        this.longest_up_path = new TreeMap<intPair, Integer>();
 
         /* better than below?? */
 
-        Iterator<nTuple<Integer>> pit = this.neighborhood_relation.iterator();
+        Iterator<intPair> pit = this.neighborhood_relation.iterator();
         while (pit.hasNext()) {
-            nTuple<Integer> pair = pit.next();
+            intPair pair = pit.next();
 
             this.longest_up_path.put(pair, 1);
         }
 
-        Set<nTuple<Integer>> got_better = new TreeSet<nTuple<Integer>>(this.neighborhood_relation);
+        Set<intPair> got_better = new TreeSet<intPair>(this.neighborhood_relation);
 
 
         while (!got_better.isEmpty()) {
 
-            Set<nTuple<Integer>> keyset = new TreeSet<nTuple<Integer>>(got_better);
-            got_better = new TreeSet<nTuple<Integer>>();
+            Set<intPair> keyset = new TreeSet<intPair>(got_better);
+            got_better = new TreeSet<intPair>();
 
             pit = keyset.iterator();
             while (pit.hasNext()) {
-                nTuple<Integer> pair = pit.next();
+                intPair pair = pit.next();
                 Integer l = pair.get(0);
                 Integer h = pair.get(1);
                 Integer length = this.longest_up_path.get(pair);
@@ -444,7 +444,7 @@ public class chronologie implements Comparable {
                 Iterator<Integer> nit = this.upper_neighbors.get(h).iterator();
                 while (nit.hasNext()) {
                     Integer hh = nit.next();
-                    nTuple<Integer> npair = new nTuple<Integer>(l, hh);
+                    intPair npair = new intPair(l, hh);
                     if (!this.longest_up_path.containsKey(npair)) {
                         this.longest_up_path.put(npair, length + 1);
                         got_better.add(npair);
@@ -471,7 +471,7 @@ public class chronologie implements Comparable {
 //            while (tit.hasNext()) {
 //                Integer t = tit.next();
 //                if (!s.equals(t)) {
-//                    this.longest_up_path.put(new nTuple<Integer>(s, t), 1);
+//                    this.longest_up_path.put(new intPair(s, t), 1);
 //                }
 //            }
 //        }
@@ -484,12 +484,12 @@ public class chronologie implements Comparable {
 //            while (sit.hasNext()) {
 //                Integer s = sit.next();
 //                Set<Integer> sf = this.filters.get(s);
-//                Iterator<nTuple<Integer>> current = this.longest_up_path.keySet().iterator();
+//                Iterator<intPair> current = this.longest_up_path.keySet().iterator();
 //                while (current.hasNext()) {
-//                    nTuple<Integer> pair = current.next();
+//                    intPair pair = current.next();
 //                    if ((pair.get(0) != s) && sf.contains(pair.get(0))) {
 //                        Integer lengthVia = 1 + this.longest_up_path.get(pair);
-//                        nTuple<Integer> via = new nTuple<Integer>(s, pair.get(1));
+//                        intPair via = new intPair(s, pair.get(1));
 //                        if (lengthVia > this.longest_up_path.get(via)) {
 //                            this.longest_up_path.put(via, lengthVia);
 //                            checkAgain = true;
@@ -516,16 +516,16 @@ public class chronologie implements Comparable {
         c.addPair(-1, 1);
 
         System.out.println("Relation pairs:");
-        Iterator<nTuple<Integer>> it = c.relation.iterator();
+        Iterator<intPair> it = c.relation.iterator();
         while (it.hasNext()) {
-            nTuple<Integer> pair = it.next();
+            intPair pair = it.next();
             System.out.println(pair);
         }
 
         System.out.println("Neighbor pairs:");
         it = c.neighborhood_relation.iterator();
         while (it.hasNext()) {
-            nTuple<Integer> pair = it.next();
+            intPair pair = it.next();
             System.out.println(pair);
         }
 
@@ -535,7 +535,7 @@ public class chronologie implements Comparable {
         System.out.println("Neighbor pairs:");
         it = c.neighborhood_relation.iterator();
         while (it.hasNext()) {
-            nTuple<Integer> pair = it.next();
+            intPair pair = it.next();
             System.out.println(pair);
         }
 
