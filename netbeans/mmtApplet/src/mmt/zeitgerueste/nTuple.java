@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.lang.reflect.*;
 
+
 /**
  *
  * @author immanuel
@@ -31,7 +32,7 @@ public class nTuple<T> implements Comparable {
 
     public nTuple(T[] tuple) {
         this.tuple = new ArrayList<T>(tuple.length);
-        for (int i=0;i<tuple.length;++i) {
+        for (int i = 0; i < tuple.length; ++i) {
             this.tuple.add(tuple[i]);
         }
     }
@@ -43,7 +44,7 @@ public class nTuple<T> implements Comparable {
         if (os != ts) {
             return ts - os;
         }
-        for (int i=0;i<os;++i) {
+        for (int i = 0; i < os; ++i) {
             Comparable<T> p = (Comparable<T>) this.tuple.get(i);
             int cmp = p.compareTo(other.tuple.get(i));
             if (cmp != 0) {
@@ -51,14 +52,12 @@ public class nTuple<T> implements Comparable {
             }
         }
         return 0;
-        
+
     }
-
-
 
     @Override
     protected Object clone() throws CloneNotSupportedException {
-        nTuple<T> obj=null;
+        nTuple<T> obj = null;
         try {
             Constructor c = this.getClass().getConstructor(new Class[]{});
             try {
@@ -77,10 +76,9 @@ public class nTuple<T> implements Comparable {
         } catch (SecurityException ex) {
             Logger.getLogger(nTuple.class.getName()).log(Level.SEVERE, null, ex);
         }
-        obj.tuple = (ArrayList<T>)this.tuple.clone();
+        obj.tuple = (ArrayList<T>) this.tuple.clone();
         return obj;
     }
-
 
     public nTuple() {
         this.tuple = new ArrayList<T>();
@@ -120,7 +118,7 @@ public class nTuple<T> implements Comparable {
 
     @Override
     public boolean equals(Object obj) {
-        
+
         if (obj == null) {
             return false;
         }
@@ -178,8 +176,8 @@ public class nTuple<T> implements Comparable {
         nTuple<Integer> x = new nTuple<Integer>(1);
         System.out.println(t);
         System.out.println(v);
-        System.out.println(t==v);
-        System.out.println(t==v2);
+        System.out.println(t == v);
+        System.out.println(t == v2);
         System.out.println(t.equals(v2));
         System.out.println(v2.hashCode());
         System.out.println(x.hashCode());
@@ -197,14 +195,14 @@ public class nTuple<T> implements Comparable {
         System.out.println(tupleSet.contains(v2));
         try {
             System.out.println(t.clone());
-            nTuple<nTuple<Integer>> degree = new nTuple<nTuple<Integer>>(t,v);
+            nTuple<nTuple<Integer>> degree = new nTuple<nTuple<Integer>>(t, v);
             nTuple<nTuple<Integer>> degree2 = (nTuple<nTuple<Integer>>) degree.clone();
-            System.out.println("deep cloning? " + (degree2.get(0)==degree.get(0)));
+            System.out.println("deep cloning? " + (degree2.get(0) == degree.get(0)));
             System.out.println(degree + " = " + degree2);
         } catch (CloneNotSupportedException ex) {
             Logger.getLogger(nTuple.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         
+
     }
 }
