@@ -13,7 +13,24 @@ import java.util.*;
  */
 public class intervallChronologie extends chronologie {
 
+    ArrayList start_points, end_points;
+
+    public intervallChronologie(ArrayList a, ArrayList b, boolean keepListRefs) {
+        this.initChronologie(a, b, keepListRefs);
+    }
+
     public intervallChronologie(ArrayList a, ArrayList b) {
+        this.initChronologie(a, b, false);
+    }
+
+    private void initChronologie(ArrayList a, ArrayList b, boolean keepListRefs) {
+        if (keepListRefs) {
+            this.start_points = a;
+            this.end_points = b;
+        } else {
+            this.start_points = null;
+            this.end_points = null;
+        }
         /* i < j iff b(i).compareTo(a(j)) <= 0 */
         TreeMap<nTuple<Comparable>, Set<Integer>> map = new TreeMap<nTuple<Comparable>, Set<Integer>>();
 
@@ -154,14 +171,22 @@ public class intervallChronologie extends chronologie {
             }
         }
 
+    }
 
+    public void writeEndpointFile(String filename) throws IOException {
+        if (start_points == null) {
+            return;
+        }
 
+        FileWriter file = new FileWriter(filename);
+        file.write("{ ");
+        int count = start_points.size();
+        for (int i=0;i<count;++i) {
+            file.write("'v"+i+"': ("+start_points.get(i)+", "+end_points.get(i)+"),\n");
+        }
+        file.write("}\n");
 
-
-
-//    private Map<Integer, Set<Integer>> upper_neighbors;
-//    private Map<Integer, Set<Integer>> lower_neighbors;
-//    private Map<intPair, Integer> longest_up_path;
+        file.close();
     }
 
     public static void main(String args[])

@@ -92,7 +92,7 @@ public class midiEvents {
             ++idx;
         }
 
-        z.X = new intervallChronologie(start_time, end_time);
+        z.X = new intervallChronologie(start_time, end_time, true);
         
 
         return z;
@@ -122,6 +122,7 @@ public class midiEvents {
         System.out.println("weighted= "+z.weightedCountAnnotationsInverse());
 
         z.writeToDotFile("/tmp/33.dot");
+        ((intervallChronologie)z.X).writeEndpointFile("/tmp/33.points");
         
         
         

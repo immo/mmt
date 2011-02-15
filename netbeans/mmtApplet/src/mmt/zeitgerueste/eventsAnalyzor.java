@@ -30,6 +30,8 @@ public class eventsAnalyzor {
             String name = "/tmp/dot/"+(new File(args[i])).getName()+".dot";
             System.out.print("Creating dot file "+name);
             z.writeToDotFile2(name);
+            name = "/tmp/dot/"+(new File(args[i])).getName()+".points";
+            ((intervallChronologie)z.X).writeEndpointFile(name);
             System.out.println();
 
         }
