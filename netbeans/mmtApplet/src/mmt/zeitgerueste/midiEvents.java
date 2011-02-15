@@ -76,9 +76,11 @@ public class midiEvents {
                 key_code.add(Integer.parseInt(t.get(3).trim()));
                 start_beat.add(Float.parseFloat(t.get(4).trim()));
                 beat_length.add(Float.parseFloat(t.get(5).trim()));
-
             
         }
+
+
+        
     }
 
     zeitgeruest generateZeitgeruest() {
@@ -114,15 +116,16 @@ public class midiEvents {
             throws java.io.IOException, java.io.FileNotFoundException {
         System.out.println("heap size="+Runtime.getRuntime().maxMemory());
         System.out.println("Testing midi events class...");
-        midiEvents evts = new midiEvents("/home/immanuel/git/l.jython/data/stpaul_33.events");
+        midiEvents evts = new midiEvents("/home/immanuel/git/l.jython/data/test_1_2_1_3.events");
+        System.out.println(evts.raw_events);
         System.out.println("Generating zeitgeruest...");
         zeitgeruest z = evts.generateZeitgeruest();
         System.out.println("done.");
         System.out.println("flat= "+z.flatCountAnnotationsInverse());
         System.out.println("weighted= "+z.weightedCountAnnotationsInverse());
-
-        z.writeToDotFile("/tmp/33.dot");
-        ((intervallChronologie)z.X).writeEndpointFile("/tmp/33.points");
+        System.out.println(z);
+        z.writeToDotFile2("/tmp/test_1_2_1_3.dot");
+        ((intervallChronologie)z.X).writeEndpointFile("/tmp/test_1_2_1_3.points");
         
         
         

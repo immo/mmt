@@ -18,7 +18,7 @@ public class intPair implements Comparable {
     }
 
     int get(int c) {
-        if (c==0) {
+        if (c!=0) { 
             return q;
         }
         return p;

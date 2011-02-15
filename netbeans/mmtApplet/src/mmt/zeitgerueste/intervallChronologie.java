@@ -191,9 +191,11 @@ public class intervallChronologie extends chronologie {
 
     public static void main(String args[])
             throws java.io.IOException, java.io.FileNotFoundException {
-        System.out.println((new Integer(3)).compareTo(new Integer(3)));
+        System.out.println((new Integer(3)).compareTo(new Integer(5)));
         ArrayList<Integer> a = new ArrayList<Integer>();
         ArrayList<Integer> b = new ArrayList<Integer>();
+        
+
         a.add(0);
         b.add(1);
         a.add(1);

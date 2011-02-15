@@ -170,6 +170,6 @@ for name in sys.argv[option_count:]:
                 for line in track:
                     print(", ".join([str(track_nbr)]+\
                                     map(lambda x:str(x), line)+\
-                                    [str(l[0]/ticks_per_quarter)]))
+                                    [str(line[0]/ticks_per_quarter)]))
                 track_nbr += 1
                 
