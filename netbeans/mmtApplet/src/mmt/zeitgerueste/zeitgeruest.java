@@ -517,7 +517,7 @@ public class zeitgeruest implements Comparable {
             intPair edge = it.next();
 
             file.write(" v"+edge.get(0)+" -> v"+edge.get(1)+" [arrowsize=0.25 color=\""+
-                    (0.1666 - 0.1666*label_to_greyscale.get(T.get(edge.get(1)).annotations.get(1)))
+                    (0.1666 - 0.1666*label_to_greyscale.get(T.get(edge.get(0)).annotations.get(1)))
                     +" 1.0 0.85\" weigth=\""+
                     (0.4+0.4*label_to_greyscale.get(T.get(edge.get(1)).annotations.get(1))+
                     0.2*label_to_greyscale.get(T.get(edge.get(0)).annotations.get(1)))+"\"];\n");
