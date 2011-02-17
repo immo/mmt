@@ -64,6 +64,7 @@ times = list(set(times))
 times.sort()
 
 print("Start/end point times range:",times[0],"to",times[-1])
+times.append(times[-1]+midi_frames_per_second) #add another second
 
 times_frames = {}
 times_frames_up_to = {}
@@ -80,6 +81,8 @@ def get_relevant_points(t):
 times_nodes = {}
 for t in times:
     times_nodes[t] = get_relevant_points(t)
+
+print("Relpts:",times_nodes[times[-1]])
 
 points_in_svg = {}
 nodes_in_svg = {}
@@ -104,6 +107,7 @@ min_width = 400
 times_window = {}
 times_next_window = {}
 t_before = 0
+last_window = [0,0,0,0]
 for t in times:
     try:
         val = [min(map(lambda x:x[0],times_points[t]))*0.95,
@@ -127,11 +131,14 @@ for t in times:
             val[1] = yt
             val[3] = yb
         
-        times_window[t] = val
-        times_next_window[t_before] = times_window[t]
-        t_before = t
     except Exception,err:
+        val = last_window
         print(err)
+    times_window[t] = val
+    times_next_window[t_before] = times_window[t]
+    t_before = t
+    last_window = val
+        
 
 
 wins = times_window.keys()
@@ -147,11 +154,12 @@ def make_brighter(color_value):
         r = int(v[1:3],16);
         g = int(v[3:5],16);
         b = int(v[5:7],16);
-        r = (r|127)>>2
-        g = (g|127)>>2
-        b = b|127
+        r = (r|127)>>4
+        g = (g|127)>>3
+        b = 0xFF
         return "#"+hex(r)[2:4]+hex(g)[2:4]+hex(b)[2:4]
     else:
+        print("!")
         return "#3333FF"
 
 marked_nodes = []
