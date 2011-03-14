@@ -11,15 +11,15 @@ import math
 
 #flipped video format :)
 
-video_w = 1080
-video_h = 1920
+video_w = 720
+video_h = video_w*16/9
 rotate90 = 1
 midi_frames_per_second = 1920
 movie_frames_per_second = 30
-left_window_times = midi_frames_per_second*2
-right_window_times = midi_frames_per_second*3
-pre_glow_frames = movie_frames_per_second/4
-after_glow_frames = (movie_frames_per_second*2)/3
+left_window_times = midi_frames_per_second/2
+right_window_times = midi_frames_per_second
+pre_glow_frames = movie_frames_per_second/10
+after_glow_frames = movie_frames_per_second/4
 
 def i2str(i):
     s = str(i)
@@ -317,7 +317,12 @@ def grey_node(node, how_much_grey):
 marked_nodes = []
 marked_nodes_style = [("fill",make_brighter),("stroke",make_brighter)]
 
+
 svg_xml_main_graph = svg_xml.xpathEval("//*[@id='graph1']")[0]
+remove_all_children(svg_xml_main_graph)
+
+xml_str = str(svg_xml)
+
 
 print("Calculating bounding boxes...")
 svg_xml_edges_bbox = {}
@@ -333,7 +338,8 @@ for node in svg_xml_edges:
 svg_xml_nodes_titles = {}
 for node in svg_xml_nodes:
     svg_xml_nodes_titles[node] = get_titles(node)
-
+    
+svg = None
 
 for t in wins:
     #if None:
@@ -383,7 +389,6 @@ for t in wins:
             alpha = (fi-f)/f_count
             f_win[idx] = win[idx]*(1.0-alpha) + next_win[idx]*alpha
 
-        remove_all_children(svg_xml_main_graph)
         for node in svg_xml_nodes:
             bbox = svg_xml_nodes_bbox[node]
             if box_intersection(bbox,f_win):
@@ -391,12 +396,12 @@ for t in wins:
                 if nodetitle in colored_nodes:
                     svg_xml_main_graph.addChild(node.copyNode(1))
                 else:
-                    if (fi > points_frames[nodetitle][0]-pre_glow_frames):
-                        greyness = 1.0+(fi-points_frames[nodetitle][0])/float(pre_glow_frames)
+                    if (fi > points_frames[nodetitle][0]-pre_glow_frames) and (fi <= points_frames[nodetitle][0]):
+                        greyness = -(fi-points_frames[nodetitle][0])/float(pre_glow_frames)
                         greyed = node.copyNode(1)
                         grey_node(greyed,greyness)
                         svg_xml_main_graph.addChild(greyed)
-                    elif (fi < points_frames[nodetitle][1]+after_glow_frames):
+                    elif (fi < points_frames[nodetitle][1]+after_glow_frames) and (fi >= points_frames[nodetitle][1]):
                         greyness = (fi-points_frames[nodetitle][1])/float(after_glow_frames)
                         greyed = node.copyNode(1)
                         grey_node(greyed,greyness)
@@ -413,12 +418,12 @@ for t in wins:
                 if nodetitle in colored_nodes:
                     svg_xml_main_graph.addChild(node.copyNode(1))
                 else:
-                    if (fi > points_frames[nodetitle][0]-pre_glow_frames):
-                        greyness = 1.0+(fi-points_frames[nodetitle][0])/float(pre_glow_frames)
+                    if (fi > points_frames[nodetitle][0]-pre_glow_frames) and (fi <= points_frames[nodetitle][0]):
+                        greyness = -(fi-points_frames[nodetitle][0])/float(pre_glow_frames)
                         greyed = node.copyNode(1)
                         grey_node(greyed,greyness)
                         svg_xml_main_graph.addChild(greyed)
-                    elif (fi < points_frames[nodetitle][1]+after_glow_frames):
+                    elif (fi < points_frames[nodetitle][1]+after_glow_frames) and (fi >= points_frames[nodetitle][1]):
                         greyness = (fi-points_frames[nodetitle][1])/float(after_glow_frames)
                         greyed = node.copyNode(1)
                         grey_node(greyed,greyness)
@@ -427,19 +432,36 @@ for t in wins:
                         greyed = node.copyNode(1)
                         grey_node(greyed,1.0)
                         svg_xml_main_graph.addChild(greyed)
-    
-
-        svg = rsvg.Handle(data=str(svg_xml))
-            
-
         context = cairo.Context(surface)
         #clear background
         context.set_source_rgb(0,0,0)
         context.paint()
+    
+        if svg:
+            context.scale( float(video_w)/(old_f_win[2]-old_f_win[0]),
+                           float(video_h)/(old_f_win[3]-old_f_win[1]) )
+            context.translate(-old_f_win[0],-old_f_win[1])
+            svg.render_cairo(context)
+            #paint last frame slightly dimmed
+            context = cairo.Context(surface)
+            context.set_source_rgba(0,0,0,128)
+            context.paint()
+
+
+        svg = rsvg.Handle(data=str(svg_xml))
+        svg_xml.freeDoc()
+        svg_xml = xml.parseDoc(xml_str)
+        svg_xml_main_graph = svg_xml.xpathEval("//*[@id='graph1']")[0]
+        
+          
+
         #paint svg
         context.scale( float(video_w)/(f_win[2]-f_win[0]),
                        float(video_h)/(f_win[3]-f_win[1]) )
         context.translate(-f_win[0],-f_win[1])
+
+        old_f_win = f_win
+        
         svg.render_cairo(context)
         #rotate
         if rotate90:
