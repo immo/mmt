@@ -541,6 +541,11 @@ public class zeitgeruest implements Comparable {
 
         }
 
+        if (!(X.hasIntervalProperty())) {
+            node_ops += " color=\"#FF0000\"";
+            arrow_ops += " color=\"#FF0000\"";
+        }
+
         for (int i = 0; i < T.size(); ++i) {
             dot += node_prefix + i + "[label=\"\" shape=\"point\" " + node_ops + "];\n";
         }

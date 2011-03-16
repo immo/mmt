@@ -50,6 +50,28 @@ public class chronologie implements Comparable {
         }
     }
 
+    public boolean hasIntervalProperty() {
+        Iterator<intPair> it = neighborhood_relation.iterator();
+        while (it.hasNext()) {
+            intPair a = it.next();
+            Iterator<intPair> it2=neighborhood_relation.iterator();
+            while (it2.hasNext()) {
+                intPair b = it2.next();
+                if (a.compareTo(b)<=0) {
+                    int s = a.get(0);
+                    int t = a.get(1);
+                    int p = b.get(0);
+                    int q = b.get(1);
+                    if (!(isLess(s,q)||isLess(p,t))) {
+                        return false; //counterexample!!
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
