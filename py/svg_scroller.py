@@ -14,6 +14,7 @@ import math
 video_w = 720
 video_h = video_w*16/9
 rotate90 = 1
+line_stroke_width = 2.0
 midi_frames_per_second = 1920
 movie_frames_per_second = 30
 left_window_times = 0#midi_frames_per_second/2
@@ -346,6 +347,145 @@ outfile.write(r"#!/usr/bin/python"+"\n")
 outfile.write(r"#coding:utf-8"+"\n")
 outfile.write("times_window = "+repr(times_window)+"\n")
 
+def make_smooth_frames_wins():
+    times = times_window.keys()
+    times.sort()
+    frames = map(lambda x: int(x*30./1920.),times)
+
+    plotf = []
+    plotw = []
+
+    for i in xrange(0,len(times)):
+        t0 = times[i]
+        if i+1<len(times):
+            t1 = times[i+1]
+        else:
+            t1 = t0
+        win0 = times_window[t0]
+        win1 = times_window[t1]
+        f0 = frames[i]
+        if i+1<len(frames):
+            f1 = frames[i+1]
+        else:
+            f1 = f0+1
+
+        flen = float(f1-f0)
+
+        for f in xrange(f0,f1):
+            alpha = (f-f0)/flen
+            f_win = [0,0,0,0]
+            for idx in range(4):
+                f_win[idx] = win0[idx]*(1.0-alpha) + win1[idx]*alpha
+            plotf.append(f)
+            plotw.append(f_win)
+
+
+    min_x = min(map(lambda x:x[0],plotw))
+    max_x = max(map(lambda x:x[2],plotw))
+    min_y = min(map(lambda x:x[1],plotw))
+    max_y = max(map(lambda x:x[3],plotw))
+
+    ctr_x = (min_x+max_x)/2
+    ctr_y = (min_y+max_y)/2
+    wdh_x = max_x-min_x
+    wdh_y = max_y-min_y
+    wdt_y = wdh_x*16/9
+    wdt_x = wdh_y*9/16
+
+    if wdt_y > wdh_y:
+        print("More height")
+        ifwin = [min_x,ctr_y-wdt_y/2,max_x,ctr_y+wdt_y/2]
+    elif wdt_x >= wdh_x:
+        print("More width")
+        ifwin = [ctr_x-wdt_x/2,min_y,ctr_x+wdt_x/2,max_y]
+
+    print("Initial (still) window = ",ifwin)
+    print("Ratio = ",(ifwin[2]-ifwin[0])/(ifwin[3]-ifwin[1]))
+
+    second_d_bound = [0.1]*4
+
+    steptime = 6.0
+
+    smoothf = [int(i*steptime*30)
+               for i in range(0,int(math.ceil(plotf[-1]/(steptime*30.)))+1)]
+
+    smoothw = []
+    for idx in range(len(smoothf)):
+        if idx*30*steptime < len(plotw):
+            smoothw.append(plotw[smoothf[idx]])
+        else:
+            smoothw.append(plotw[-1])
+
+
+    move_out = []
+
+    for i in range(len(smoothf)-1):
+        f0 = smoothf[i]
+        f1 = min(smoothf[i+1],len(plotf)-1)
+        move = [0.0,0.0,0.0,0.0]
+        flen = float(f1-f0)
+        win0 = smoothw[i]
+        win1 = smoothw[i+1]
+        for f in range(f0,f1):
+            alpha = (f-f0)/flen
+            f_win = [0,0,0,0]
+            for idx in range(4):
+                f_win[idx] = win0[idx]*(1.0-alpha) + win1[idx]*alpha
+                if idx<2:
+                    if f_win[idx] > plotw[f][idx]:
+                        move[idx] = min(move[idx],-f_win[idx]+plotw[f][idx])
+                else:
+                    if f_win[idx] < plotw[f][idx]:
+                        move[idx] = max(move[idx],-f_win[idx]+plotw[f][idx])
+        move_out.append(move)
+
+    move_out.append(move)
+    move_out.append(move)
+
+    for i in range(1,len(smoothf)):
+        for idx in range(4):
+            if idx<2:
+                m = min(move_out[i][idx],move_out[i+1][idx],move_out[i-1][idx])
+            else:
+                m = max(move_out[i][idx],move_out[i+1][idx],move_out[i-1][idx])
+            smoothw[i][idx] += m
+
+    for i in range(len(smoothw)):
+        fix_aspect = smoothw[i]
+        x = (fix_aspect[0]+fix_aspect[2])/2
+        y = (fix_aspect[1]+fix_aspect[3])/2
+        w = (fix_aspect[2]-fix_aspect[0])
+        h = (fix_aspect[3]-fix_aspect[1])
+        if w*16/9 > h:
+            h = w*16/9
+        elif h*9/16 > w:
+            w = h*9/16
+        smoothw[i] = [x-w/2,y-h/2,x+w/2,y+h/2]
+
+    smooth_windows = []
+
+    for i in range(len(smoothf)-1):
+        f0 = smoothf[i]
+        f1 = min(smoothf[i+1],len(plotf)-1)
+
+        flen = float(f1-f0)
+        win0 = smoothw[i]
+        win1 = smoothw[i+1]
+        for f in range(f0,f1):
+            alpha = (f-f0)/flen
+            f_win = [0,0,0,0]
+            for idx in range(4):
+                f_win[idx] = win0[idx]*(1.0-alpha) + win1[idx]*alpha
+            smooth_windows.append(f_win)
+
+    smooth_windows.append(f_win)
+    smooth_windows.append(f_win)
+    return smooth_windows
+
+print("Make smooth frame windows....")
+smooth_windows = make_smooth_frames_wins()
+print("done.")
+
 for t in wins:
     #if None:
     #    for n in marked_nodes:
@@ -389,31 +529,30 @@ for t in wins:
     colored_nodes = times_nodes[t]
 
     for fi in xrange(f,f_last):
-        f_win = [0,0,0,0]
-        alpha = (fi-f)/f_count
-        
-        for idx in range(4):
-            f_win[idx] = win[idx]*(1.0-alpha) + next_win[idx]*alpha
+        f_win = smooth_windows[fi]
 
+        stroke_width = (f_win[2]-f_win[0])/float(video_w)*line_stroke_width
+        
         for node in svg_xml_nodes:
             bbox = svg_xml_nodes_bbox[node]
             if box_intersection(bbox,f_win):
                 nodetitle = svg_xml_nodes_titles[node][0]
+                nodecopy = node.copyNode(1)
                 if nodetitle in colored_nodes:
-                    svg_xml_main_graph.addChild(node.copyNode(1))
+                    svg_xml_main_graph.addChild(nodecopy)
                 else:
                     if (fi > points_frames[nodetitle][0]-pre_glow_frames) and (fi <= points_frames[nodetitle][0]):
                         greyness = -(fi-points_frames[nodetitle][0])/float(pre_glow_frames)
-                        greyed = node.copyNode(1)
+                        greyed = nodecopy
                         grey_node(greyed,greyness)
                         svg_xml_main_graph.addChild(greyed)
                     elif (fi < points_frames[nodetitle][1]+after_glow_frames) and (fi >= points_frames[nodetitle][1]):
                         greyness = (fi-points_frames[nodetitle][1])/float(after_glow_frames)
-                        greyed = node.copyNode(1)
+                        greyed = nodecopy
                         grey_node(greyed,greyness)
                         svg_xml_main_graph.addChild(greyed)
                     else:                       
-                        greyed = node.copyNode(1)
+                        greyed = nodecopy
                         grey_node(greyed,1.0)
                         svg_xml_main_graph.addChild(greyed)
                     
@@ -421,21 +560,30 @@ for t in wins:
             bbox = svg_xml_edges_bbox[node]
             if box_intersection(bbox,f_win):
                 nodetitle = svg_xml_edges_titles[node][0]
+                nodecopy = node.copyNode(1)
+                child = nodecopy.children
+                while child:
+                    if child.hasProp("d"):
+                        child.setProp("stroke-width",str(stroke_width))
+
+                    child = child.next
+
+
                 if nodetitle in colored_nodes:
-                    svg_xml_main_graph.addChild(node.copyNode(1))
+                    svg_xml_main_graph.addChild(nodecopy)
                 else:
                     if (fi > points_frames[nodetitle][0]-pre_glow_frames) and (fi <= points_frames[nodetitle][0]):
                         greyness = -(fi-points_frames[nodetitle][0])/float(pre_glow_frames)
-                        greyed = node.copyNode(1)
+                        greyed = nodecopy
                         grey_node(greyed,greyness)
                         svg_xml_main_graph.addChild(greyed)
                     elif (fi < points_frames[nodetitle][1]+after_glow_frames) and (fi >= points_frames[nodetitle][1]):
                         greyness = (fi-points_frames[nodetitle][1])/float(after_glow_frames)
-                        greyed = node.copyNode(1)
+                        greyed = nodecopy
                         grey_node(greyed,greyness)
                         svg_xml_main_graph.addChild(greyed)
                     else:                       
-                        greyed = node.copyNode(1)
+                        greyed = nodecopy
                         grey_node(greyed,1.0)
                         svg_xml_main_graph.addChild(greyed)
         context = cairo.Context(surface)
