@@ -16,8 +16,8 @@ video_h = video_w*16/9
 rotate90 = 1
 midi_frames_per_second = 1920
 movie_frames_per_second = 30
-left_window_times = midi_frames_per_second/2
-right_window_times = midi_frames_per_second
+left_window_times = 0#midi_frames_per_second/2
+right_window_times = 0#midi_frames_per_second
 pre_glow_frames = movie_frames_per_second/10
 after_glow_frames = movie_frames_per_second/4
 
@@ -341,6 +341,11 @@ for node in svg_xml_nodes:
     
 svg = None
 
+outfile = open('/tmp/times_window','wb')
+outfile.write(r"#!/usr/bin/python"+"\n")
+outfile.write(r"#coding:utf-8"+"\n")
+outfile.write("times_window = "+repr(times_window)+"\n")
+
 for t in wins:
     #if None:
     #    for n in marked_nodes:
@@ -385,8 +390,9 @@ for t in wins:
 
     for fi in xrange(f,f_last):
         f_win = [0,0,0,0]
+        alpha = (fi-f)/f_count
+        
         for idx in range(4):
-            alpha = (fi-f)/f_count
             f_win[idx] = win[idx]*(1.0-alpha) + next_win[idx]*alpha
 
         for node in svg_xml_nodes:

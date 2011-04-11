@@ -819,6 +819,7 @@ public class zeitgeruest implements Comparable {
 
     public static void main(String args[])
             throws java.io.IOException, java.io.FileNotFoundException {
-        mkZeitgeruestsIsoClasses();
+        //mkZeitgeruestsIsoClasses();
+        mkMapIsoClasses();
     }
 }
