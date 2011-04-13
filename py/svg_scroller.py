@@ -14,8 +14,9 @@ import math
 video_w = 720
 video_h = video_w*16/9
 rotate90 = 1
-line_stroke_width = 2.0
-midi_frames_per_second = 1920
+line_stroke_width = 1.2
+speed_factor = (3*60.+48) / (5*60.+19)
+midi_frames_per_second = int(1920*speed_factor)
 movie_frames_per_second = 30
 left_window_times = 0#midi_frames_per_second/2
 right_window_times = 0#midi_frames_per_second
@@ -350,7 +351,7 @@ outfile.write("times_window = "+repr(times_window)+"\n")
 def make_smooth_frames_wins():
     times = times_window.keys()
     times.sort()
-    frames = map(lambda x: int(x*30./1920.),times)
+    frames = map(lambda x: int(x*float(movie_frames_per_second)/float(midi_frames_per_second)),times)
 
     plotf = []
     plotw = []
@@ -406,12 +407,12 @@ def make_smooth_frames_wins():
 
     steptime = 6.0
 
-    smoothf = [int(i*steptime*30)
-               for i in range(0,int(math.ceil(plotf[-1]/(steptime*30.)))+1)]
+    smoothf = [int(i*steptime*movie_frames_per_second)
+               for i in range(0,int(math.ceil(plotf[-1]/(steptime*float(movie_frames_per_second))))+1)]
 
     smoothw = []
     for idx in range(len(smoothf)):
-        if idx*30*steptime < len(plotw):
+        if idx*movie_frames_per_second*steptime < len(plotw):
             smoothw.append(plotw[smoothf[idx]])
         else:
             smoothw.append(plotw[-1])
