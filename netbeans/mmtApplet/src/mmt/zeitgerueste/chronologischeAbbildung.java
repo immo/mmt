@@ -382,12 +382,27 @@ public class chronologischeAbbildung implements Comparable {
 
     public String getDotCode() {
         String dot = "digraph G {\n";
-        dot += "subgraph cluster_1 {\ncolor=\"lightgrey\";\n";
-        dot += target.getDotCode(false, "t", "color=\"red\"", "color=\"lightgrey\"");
+        dot += "subgraph cluster_1 {";
+        if (target.X.hasIntervalProperty()) {
+            dot += "\ncolor=\"lightgrey\";\n";
+            dot += target.getOldDotCode(false, "t", "color=\"#FF0000\"", "color=\"#FF0000\"");
+        } else {
+            dot += "\ncolor=\"red\";\n";
+            dot += target.getOldDotCode(false, "t", "color=\"#880000\"", "color=\"#880000\"");
+        }
+        
         dot += "}\n";
 
-        dot += "subgraph cluster_2 {\ncolor=\"lightgrey\";\n";
-        dot += source.getDotCode(false, "s", "color=\"blue\"", "color=\"lightgrey\"");
+        dot += "subgraph cluster_2 {";
+        if (source.X.hasIntervalProperty()) {
+            dot += "\ncolor=\"lightgrey\";\n";
+            dot += source.getOldDotCode(false, "s", "color=\"#0000FF\"", "color=\"#0000FF\"");
+        } else
+        {
+            dot += "\ncolor=\"red\";\n";
+            dot += source.getOldDotCode(false, "s", "color=\"#000088\"", "color=\"#000088\"");
+        }
+        
         dot += "}\n";
 
         Iterator<Integer> it = map.keySet().iterator();

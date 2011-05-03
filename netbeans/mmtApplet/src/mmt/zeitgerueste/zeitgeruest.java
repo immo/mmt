@@ -567,6 +567,34 @@ public class zeitgeruest implements Comparable {
         return dot;
     }
 
+    public String getOldDotCode(boolean with_headers, String node_prefix, String node_ops, String arrow_ops) {
+        String dot = "";
+        if (with_headers) {
+            dot += "digraph g {\n";
+
+        }
+
+        for (int i = 0; i < T.size(); ++i) {
+            dot += node_prefix + i + "[label=\"\" shape=\"point\" " + node_ops + "];\n";
+        }
+
+        Iterator<intPair> it = X.getNeighbors().iterator();
+        while (it.hasNext()) {
+            intPair edge = it.next();
+            if (arrow_ops.length() > 0) {
+                dot += node_prefix + edge.get(0) + " -> " + node_prefix + edge.get(1) + "[" + arrow_ops + "];\n";
+            } else {
+                dot += node_prefix + edge.get(0) + " -> " + node_prefix + edge.get(1) + ";\n";
+            }
+        }
+
+        if (with_headers) {
+            dot += "\n}\n";
+        }
+
+        return dot;
+    }
+
 
 
     public String getGraphML() {
@@ -625,7 +653,7 @@ public class zeitgeruest implements Comparable {
         s.add(new zeitgeruest(2));
         s.add(new zeitgeruest(3));
         s.add(new zeitgeruest(4));
-        s.add(new zeitgeruest(5));
+        //s.add(new zeitgeruest(5));
 
         z.addAll(s);
         while (!s.isEmpty()) {
