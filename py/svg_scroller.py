@@ -16,7 +16,9 @@ video_h = video_w*16/9
 rotate90 = 1
 line_stroke_width = 1.2
 speed_factor = 0.721875
-midi_frames_per_second = int(1920*speed_factor)
+#1410 = die goetter, 1920=lichtcoro
+midi_beats_per_minute = 144 #die_goetter v2=144
+midi_frames_per_second = 480*midi_beats_per_minute/60 #int(1920*speed_factor)
 movie_frames_per_second = 30
 left_window_times = 0#midi_frames_per_second/2
 right_window_times = 0#midi_frames_per_second
