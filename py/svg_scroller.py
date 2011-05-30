@@ -11,8 +11,11 @@ import math
 
 #flipped video format :)
 
-video_w = 720
-video_h = video_w*16/9
+v_aspect = 4/3.#16/9.
+h_aspect = 3/4.#9/16.
+
+video_w = 600#720
+video_h = int(video_w*v_aspect)#video_w*16/9
 rotate90 = 1
 line_stroke_width = 1.2
 speed_factor = 0.721875
@@ -392,8 +395,8 @@ def make_smooth_frames_wins():
     ctr_y = (min_y+max_y)/2
     wdh_x = max_x-min_x
     wdh_y = max_y-min_y
-    wdt_y = wdh_x*16/9
-    wdt_x = wdh_y*9/16
+    wdt_y = int(wdh_x*v_aspect)
+    wdt_x = int(wdh_y*h_aspect)
 
     if wdt_y > wdh_y:
         print("More height")
@@ -459,10 +462,10 @@ def make_smooth_frames_wins():
         y = (fix_aspect[1]+fix_aspect[3])/2
         w = (fix_aspect[2]-fix_aspect[0])
         h = (fix_aspect[3]-fix_aspect[1])
-        if w*16/9 > h:
-            h = w*16/9
-        elif h*9/16 > w:
-            w = h*9/16
+        if int(w*v_aspect) > h:
+            h = int(w*v_aspect)
+        elif int(h*h_aspect) > w:
+            w = int(h*h_aspect)
         smoothw[i] = [x-w/2,y-h/2,x+w/2,y+h/2]
 
     smooth_windows = []
