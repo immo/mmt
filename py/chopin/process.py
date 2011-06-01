@@ -149,25 +149,82 @@ for section_length in [quarter/2, quarter, quarter*2, quarter*4]:
 
     triplets = {}
 
+    trip_schemes = {}
+    trip_schemes12 = {}    
+
     for i in indices:
         array = triplets.setdefault((start[i]/(section_length)),[])
         array.append((start[i], key[i]))
 
+    triplets2 = {}
+    for k in triplets:
+        if len(triplets[k])>=3:
+            triplets2[k] = triplets[k]
+
+    triplets = triplets2
+
     occurance_count = {}
     occurance_count12 = {}    
 
+    occurance_counts = {}
+    occurance_count12s = {}
+
+    keys = []
+
     for k in triplets:
         triplets[k].sort()
-        as_tuple = tuple(map(lambda x: (x[0] % (section_length*2),x[1]), \
+
+        given = {}
+
+
+        pitches = list(set(map(lambda x:x[1], triplets[k])))
+        pitches.sort()
+        for i in range(len(pitches)):
+            given[pitches[i]] = i+1
+
+        for x in triplets[k]:
+            array = trip_schemes.setdefault(k,[])
+            array.append((x[0],given[x[1]]))
+
+
+
+        given = {}
+        current = 1
+        
+
+        for x in triplets[k]:
+            x12 = x[1]%12
+            if not x12 in given:
+                given[x12] = current
+                current += 1
+            array = trip_schemes12.setdefault(k,[])
+            array.append((x[0],given[x12]))
+
+        
+        as_tuple = tuple(map(lambda x: (x[0] % (section_length),x[1]), \
                              triplets[k]))
         occurance_count[as_tuple] = occurance_count.setdefault(as_tuple,0)+1
-        as_tuple = tuple(map(lambda x: (x[0] % (section_length*2),x[1]%12), \
+        as_tuple = tuple(map(lambda x: (x[0] % (section_length),x[1]%12), \
                              triplets[k]))
         occurance_count12[as_tuple] = occurance_count12.setdefault(as_tuple,0)+1
+
+        as_tuple = tuple(map(lambda x: (x[0] % (section_length),x[1]), \
+                             trip_schemes[k]))
+        occurance_counts[as_tuple] = occurance_counts.setdefault(as_tuple,0)+1
+
+        if not as_tuple in keys:
+            keys.append(as_tuple)
+        
+        as_tuple = tuple(map(lambda x: (x[0] % (section_length),x[1]), \
+                             trip_schemes12[k]))
+        occurance_count12s[as_tuple] = occurance_count12s.setdefault(as_tuple,0)+1
+        
         
     print("\n\n\n")
     print("section length=            ",
           section_length)
+    print("note count    =            ",
+          section_length/(quarter/6))    
     print("#different occurances=     ",
           len(occurance_count))
     print("#of sections reoccuring=   ",
@@ -185,6 +242,60 @@ for section_length in [quarter/2, quarter, quarter*2, quarter*4]:
     print("    ...time span       =   ",
           section_length*sum(map(lambda x:occurance_count12[x]-1,\
                                               occurance_count12)))
+    print("")
+    print("#different schemes=        ",
+          len(occurance_counts))
+    print("#of sections reoccuring=   ",
+          sum(map(lambda x:occurance_counts[x]-1,\
+                                              occurance_counts)))
+    print("    ...time span       =   ",
+          section_length*sum(map(lambda x:occurance_counts[x]-1,\
+                                              occurance_counts)))
+    
+    print("#different schemes%12=     ",
+          len(occurance_count12s))
+    print("#of sections reoccuring%12=",
+          sum(map(lambda x:occurance_count12s[x]-1,\
+                                              occurance_count12s)))
+    print("    ...time span       =   ",
+          section_length*sum(map(lambda x:occurance_count12s[x]-1,\
+                                              occurance_count12s)))
+
+    print("")
+    
+    
+
+    for k in range(max(trip_schemes)+1):
+        if not k in trip_schemes:
+            print(" ",end="")
+        else:
+            as_tuple = tuple(map(lambda x: (x[0] % (section_length),x[1]), \
+                             trip_schemes[k]))
+            print(chr(65+keys.index(as_tuple)),end="")
+            
+        if k%2==1:
+            print(" ",end="")       
+        if k%4==3:
+            print(" ",end="")
+        if k%32==31:
+            print("")
+
+    print("\n\n\nwhere: ")
+    
+    for k in keys:
+        code = ""
+        last = -1
+        for x in k:
+            if x[0]!=last:
+                code += " "+str(x[1])
+                last = x[0]
+            else:
+                code += str(x[1])
+            
+        print(chr(65+keys.index(k)),"=",code, end="   ")
+        if keys.index(k) % 6 == 5:
+            print("")
+
 
 
 #eof
