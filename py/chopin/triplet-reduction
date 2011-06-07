@@ -1,0 +1,581 @@
+
+% TAKT  1
+  <des''' ges''' b'''>
+  <es''' ges'''>
+
+  <b'' des''' ges'''>
+  <ges'' b'' des'''>
+
+% TAKT  2
+  <des'' ges'' b''>
+  <es'' ges''>
+
+  <b' des'' ges''>
+  <ges' b' des''>
+
+% TAKT  3
+  <des' as' des''>
+  <as' des'' as''>
+
+  <as' es'' as''>
+  <es'' as'' es'''>
+
+% TAKT  4
+  <es'' as'' es'''>
+  <as'' es''' as'''>
+
+  <as'' des''' as'''>
+  <des''' as''' des''''>
+
+% TAKT  5
+  <des''' ges''' b'''>
+  <es''' ges'''>
+
+  <b'' des''' ges'''>
+  <ges'' b'' des'''>
+
+% TAKT  6
+  <des'' ges'' b''>
+  <es'' ges''>
+
+  <b' des'' ges''>
+  <ges' b' des''>
+
+% TAKT  7
+  <es' as' es''>
+  <as' es'' as''>
+
+  <es'' as''>
+  <as'' es''' as'''>
+
+% TAKT  8
+  <b'' b'''>
+  <b'' b'''>
+
+  <b'' b'''>
+  <b'' b'''>
+
+% TAKT  9
+  <des''' ges''' b'''>
+  <es''' ges'''>
+
+  <b'' des''' ges'''>
+  <ges'' b'' des'''>
+
+% TAKT  10
+  <des'' ges'' b''>
+  <es'' ges''>
+
+  <b' des'' ges''>
+  <ges' b' des''>
+
+% TAKT  11
+  <des' as' des''>
+  <as' des'' as''>
+
+  <as' es'' as''>
+  <es'' as'' es'''>
+
+% TAKT  12
+  <es'' as'' es'''>
+  <as'' es''' as'''>
+
+  <as'' des''' as'''>
+  <des''' as''' des''''>
+
+% TAKT  13
+  <des''' ges''' b'''>
+  <es''' ges'''>
+
+  <b'' des''' ges'''>
+  <ges'' b'' des'''>
+
+% TAKT  14
+  <des'' ges'' b''>
+  <es'' ges''>
+
+  <b' des'' ges''>
+  <ges' b' des''>
+
+% TAKT  15
+  <es' as' es''>
+  <as' es'' as''>
+
+  <es'' as''>
+  <as'' es'''>
+
+% TAKT  16
+  <es'' as'' es'''>
+  <des'' des''' es'''>
+
+  <as'' des'''>
+  <des''' as''' des''''>
+
+% TAKT  17
+  <as''' b'''>
+  <es''' es''''>
+
+  <des''' es'''>
+  <as'' as'''>
+
+% TAKT  18
+  <as'' b''>
+  <es'' es'''>
+
+  <des'' es''>
+  r
+
+% TAKT  19
+  <as' es'' as''>
+  <es'' as'' b''>
+
+  <des'' as'' des'''>
+  <b'' des''' es'''>
+
+% TAKT  20
+  <as'' es''' as'''>
+  <es''' as''' b'''>
+
+  <des''' as''' des''''>
+  <b''' des'''' es''''>
+
+% TAKT  21
+  <as''' b'''>
+  <es''' es''''>
+
+  <des''' es'''>
+  <as'' as'''>
+
+% TAKT  22
+  <as'' b''>
+  <es'' es'''>
+
+  <des'' es''>
+  r
+
+% TAKT  23
+  <as' ges'' as''>
+  <ges'' as''>
+
+  <ges'' as'' ges'''>
+  <ges'' as''>
+
+% TAKT  24
+  <as' ges'' as''>
+  <ges'' as''>
+
+  <ges'' as'' ges'''>
+  <ges'' as''>
+
+% TAKT  25
+  <b' ges'' b''>
+  <ges'' b''>
+
+  <ges'' b'' ges'''>
+  <ges'' b''>
+
+% TAKT  26
+  <b' ges'' b''>
+  <ges'' b''>
+
+  <ges'' b'' ges'''>
+  <ges'' b''>
+
+% TAKT  27
+  <ges'' b''>
+  <ges'' b'' b'''>
+
+  <ges'' b'' as'''>
+  <ges'' b'' ges'''>
+
+% TAKT  28
+  <ges'' b'' des'''>
+  <ges'' b'' b'''>
+
+  <ges'' b'' as'''>
+  <ges'' b'' ges'''>
+
+% TAKT  29
+  <des'' b'' des'''>
+  <des''' des''''>
+
+  <des''' b''' des''''>
+  <b'' des'''>
+
+% TAKT  30
+  <des'' b'' des'''>
+  <des''' des''''>
+
+  <des''' b''' des''''>
+  <b'' des'''>
+
+% TAKT  31
+  <des'' b'' des'''>
+  <des''' des''''>
+
+  <des''' as''' des''''>
+  <as'' des'''>
+
+% TAKT  32
+  <des'' ges'' des'''>
+  <des'' des'''>
+
+  <des' ges' des''>
+  <ges des'>
+
+% TAKT  33
+  <es ges des'>
+  <ges des' es'>
+
+  <des' es' ges'>
+  <es' ges' des''>
+
+% TAKT  34
+  <es' ges' des''>
+  <ges' des'' es''>
+
+  <des'' es'' ges''>
+  <es'' ges'' des'''>
+
+% TAKT  35
+  <es'' ges'' es'''>
+  <es'' ges'' des'''>
+
+  <es'' ges'' des'''>
+  <des'' es'' ges''>
+
+% TAKT  36
+  <ges' des'' es''>
+  <es' ges' des''>
+
+  <es' ges' des''>
+  <des' es' ges'>
+
+% TAKT  37
+  <as es' ges'>
+  <es' ges' as'>
+
+  <ges' as' es''>
+  <as' es'' ges''>
+
+% TAKT  38
+  <as' es'' ges''>
+  <es'' ges'' as''>
+
+  <ges'' as'' es'''>
+  <as'' es''' ges'''>
+
+% TAKT  39
+  <ges'' as'' es'''>
+  <es'' ges'' as''>
+
+  <es'' ges'' as''>
+  <as' es'' ges''>
+
+% TAKT  40
+  <ges' as' es''>
+  <es' ges' as'>
+
+  <es' ges' as'>
+  <as es' ges'>
+
+% TAKT  41
+  <des' as' des''>
+  <as' des'' as''>
+
+  <as' des'' as''>
+  <as' des''>
+
+% TAKT  42
+  <des' as' des''>
+  <as' des'' as''>
+
+  <as' des'' as''>
+  <as' des''>
+
+% TAKT  43
+  <des' as' des''>
+  <des'' des'''>
+
+  <des'' as'' des'''>
+  <as' des''>
+
+% TAKT  44
+  <as' des'' as''>
+  <as'' as'''>
+
+  <as'' des''' as'''>
+  <des'' as''>
+
+% TAKT  45
+  <des'' es''>
+  <des''' es''' es''''>
+
+  <des'''' es''''>
+  <des''' es'''>
+
+% TAKT  46
+  <des'' es''>
+  <des''' es''' es''''>
+
+  <des'''' es''''>
+  <des''' es'''>
+
+% TAKT  47
+  <des'''' es''''>
+  <des''' es'''>
+
+  <des'''' es''''>
+  <des''' es'''>
+
+% TAKT  48
+  <des'''' es''''>
+  <des''' es'''>
+
+  <des'''' es''''>
+  <des''' es'''>
+
+% TAKT  49
+  <des''' ges''' b'''>
+  <es''' ges'''>
+
+  <b'' des''' ges'''>
+  <ges'' b'' des'''>
+
+% TAKT  50
+  <des'' ges'' b''>
+  <es'' ges''>
+
+  <b' des'' ges''>
+  <ges' b' des''>
+
+% TAKT  51
+  <des' as' des''>
+  <as' des'' as''>
+
+  <as' es'' as''>
+  <es'' as'' es'''>
+
+% TAKT  52
+  <es'' as'' es'''>
+  <as'' es''' as'''>
+
+  <as'' des''' as'''>
+  <des''' as''' des''''>
+
+% TAKT  53
+  <des''' ges''' b'''>
+  <es''' ges'''>
+
+  <b'' des''' ges'''>
+  <ges'' b'' des'''>
+
+% TAKT  54
+  <des'' ges'' b''>
+  <es'' ges''>
+
+  <b' des'' ges''>
+  <ges' b' des''>
+
+% TAKT  55
+  <es' as' es''>
+  <as' es'' as''>
+
+  <b' b''>
+  <b' b''>
+
+% TAKT  56
+  <es'' as'' es'''>
+  <as'' es''' as'''>
+
+  <b'' b'''>
+  <b'' b'''>
+
+% TAKT  57
+  <b'' es''' b'''>
+  <as'' as''' b'''>
+
+  <as'' des''' as'''>
+  <ges'' ges''' as'''>
+
+% TAKT  58
+  <des'' as'' des'''>
+  <as'' des''' as'''>
+
+  <ges'' des''' ges'''>
+  <des''' ges''' des''''>
+
+% TAKT  59
+  <b'' es''' b'''>
+  <as'' as''' b'''>
+
+  <as'' des''' as'''>
+  <ges'' ges''' as'''>
+
+% TAKT  60
+  <des'' as'' des'''>
+  <as'' des''' as'''>
+
+  <ges'' des''' ges'''>
+  <des''' ges''' des''''>
+
+% TAKT  61
+  <b'' es''' b'''>
+  <as'' as''' b'''>
+
+  <b'' es''' b'''>
+  <as'' as''' b'''>
+
+% TAKT  62
+  <b'' es''' b'''>
+  <as'' as''' b'''>
+
+  <b'' es''' b'''>
+  <as'' as''' b'''>
+
+% TAKT  63
+  <as'' des''' b'''>
+  <des''' as''' b'''>
+
+  <as'' des''' as'''>
+  <as'' as''' b'''>
+
+% TAKT  64
+  <as'' des''' b'''>
+  <des''' as''' b'''>
+
+  <as'' des''' as'''>
+  <as'' as''' b'''>
+
+% TAKT  65
+  <b''' des'''' es''''>
+  <es''' ges''' as'''>
+
+  <as'' b'' des'''>
+  <des'' es'' ges''>
+
+% TAKT  66
+  r
+  r
+
+  r
+  r
+
+% TAKT  67
+  r
+  r
+
+  <as''' b'''>
+  <des''' des''''>
+
+% TAKT  68
+  <des''' es'''>
+  <ges'' ges'''>
+
+  <as'' b''>
+  r
+
+% TAKT  69
+  <des'' ges'' as''>
+  <ges'' as'' b''>
+
+  <des'' as'' des'''>
+  <as'' des''' es'''>
+
+% TAKT  70
+  <ges'' des''' ges'''>
+  <es''' ges''' as'''>
+
+  <des''' as''' des''''>
+  <as''' des'''' es''''>
+
+% TAKT  71
+  <ges''' as'''>
+  <des''' des''''>
+
+  <des''' es'''>
+  <as'' as'''>
+
+% TAKT  72
+  <as'' b''>
+  <ges'' ges'''>
+
+  r
+  r
+
+% TAKT  73
+  <des'' ges'' as''>
+  <ges'' as'' b''>
+
+  <des'' as'' des'''>
+  <as'' des''' es'''>
+
+% TAKT  74
+  <ges'' des''' ges'''>
+  <des''' ges''' as'''>
+
+  <as'' des''' as'''>
+  <des''' as''' b'''>
+
+% TAKT  75
+  <des''' as''' b'''>
+  <b'' des''' as'''>
+
+  <b'' es''' ges'''>
+  <des'' as'' des'''>
+
+% TAKT  76
+  <des'' as'' b''>
+  <b' des'' as''>
+
+  <b' es'' ges''>
+  <des' as' des''>
+
+% TAKT  77
+  <des' as' b'>
+  <b des' as'>
+
+  <b es' ges'>
+  <des as des'>
+
+% TAKT  78
+  <ges b es'>
+  <des as des'>
+
+  <ges b es'>
+  <des as des'>
+
+% TAKT  79
+  r
+  <ges as b des'>
+
+  <b des' es' ges'>
+  <des' es' ges' b'>
+
+% TAKT  80
+  <ges' as' b' des''>
+  <b' des'' es'' ges''>
+
+  <des'' es'' ges'' b''>
+  <ges'' as'' b'' des'''>
+
+% TAKT  81
+  <b'' des''' es''' ges'''>
+  <des''' es''' ges''' b'''>
+
+  <b'' des''' es''' ges'''>
+  <des''' es''' ges''' b'''>
+
+% TAKT  82
+  <b'' des''' es''' ges'''>
+  <des''' es''' ges''' b'''>
+
+  <b'' des''' es''' ges'''>
+  <des''' es''' ges''' b'''>
+
+% TAKT  83
+  r
+  <b' des'' es'' b'' des''' es'''>
+
+  <es' ges' as' es'' ges'' as''>
+  <as b des' as' b' des''>

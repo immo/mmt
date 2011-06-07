@@ -13,7 +13,8 @@ stop = []
 channel = []
 key = []
 
-with open("opus10no5star.events","r") as hfile:
+#with open("opus10no5star.events","r") as hfile:
+with open("melodie.events","r") as hfile:
     for line in hfile:
         data = line.strip().split(",")
         # start(delta), stop(delta), channel, key, start(beat), length(beat)
@@ -78,6 +79,8 @@ def ly_pitch(p): #90=ges''' -> 84=c'''
 structure_scheme = {}
 
 for i in range(1,nbrbars+1):
+    if not i in bars:
+        continue
     for p in [0,1]:
         partwise = filter(lambda x:p*quarter <= x['o'] < (p+1)*quarter, bars[i])
         structure = frozenset(map(lambda x:(x['o']-p*quarter, x['d']),partwise))
@@ -102,7 +105,8 @@ readable_lens =  { 0:"         0",
                  880:"  ⅔·2+8+16",
                  960:"         2",
                 1040:"    2+⅔·16",
-                1440:"   2+⅔·4+8"}
+                1440:"   2+⅔·4+8",
+                1920:"       2+2"}
 
 def turn(a):
     b = []
@@ -117,6 +121,7 @@ formatted_data = {}
 needed_lens = set([])
                  
 for s in structure_scheme:
+    
     form_line = "\n\n**** " + str(len(structure_scheme[s])) + \
                 " = " + str(structure_scheme[s]) + "\n"
     x = list(s)
@@ -135,166 +140,270 @@ keys.sort()
 with open("half-bar-rhythm-schemes","w") as hfile:
     for k in keys:
         hfile.write(formatted_data[k])
-    
+
+
+with open("triplet-movements","w") as hfile:
 
 # get 16th triplet movements
 
-indices = [i for i in range(len(start)) if \
-           stop[i]-start[i] == quarter/6  and \
-           start[i]%(quarter/6) == 0   and \
-           (channel[i]==1  or \
-            64*quarter <= start[i] < 65*quarter)] # written in bass system
+    indices = [i for i in range(len(start)) if \
+               stop[i]-start[i] == quarter/6  and \
+               start[i]%(quarter/6) == 0   and \
+               (channel[i]==1  or \
+                64*quarter <= start[i] < 65*quarter)] # written in bass system
 
-for section_length in [quarter/2, quarter, quarter*2, quarter*4]:
+    for section_length in [quarter/2]:#[quarter/2, quarter, quarter*2, quarter*4]:
 
-    triplets = {}
+        triplets = {}
 
-    trip_schemes = {}
-    trip_schemes12 = {}    
+        trip_schemes = {}
+        trip_schemes12 = {}    
 
-    for i in indices:
-        array = triplets.setdefault((start[i]/(section_length)),[])
-        array.append((start[i], key[i]))
+        for i in indices:
+            array = triplets.setdefault((start[i]/(section_length)),[])
+            array.append((start[i], key[i]))
 
-    triplets2 = {}
-    for k in triplets:
-        if len(triplets[k])>=3:
-            triplets2[k] = triplets[k]
+        triplets2 = {}
+        for k in triplets:
+            if len(triplets[k])>=3:
+                triplets2[k] = triplets[k]
 
-    triplets = triplets2
+        triplets = triplets2
 
-    occurance_count = {}
-    occurance_count12 = {}    
+        occurance_count = {}
+        occurance_count12 = {}    
 
-    occurance_counts = {}
-    occurance_count12s = {}
+        occurance_counts = {}
+        occurance_count12s = {}
 
-    keys = []
+        keys = []
 
-    for k in triplets:
-        triplets[k].sort()
+        for k in triplets:
+            triplets[k].sort()
 
-        given = {}
-
-
-        pitches = list(set(map(lambda x:x[1], triplets[k])))
-        pitches.sort()
-        for i in range(len(pitches)):
-            given[pitches[i]] = i+1
-
-        for x in triplets[k]:
-            array = trip_schemes.setdefault(k,[])
-            array.append((x[0],given[x[1]]))
+            given = {}
 
 
+            pitches = list(set(map(lambda x:x[1], triplets[k])))
+            pitches.sort()
+            for i in range(len(pitches)):
+                given[pitches[i]] = i+1
 
-        given = {}
-        current = 1
-        
+            for x in triplets[k]:
+                array = trip_schemes.setdefault(k,[])
+                array.append((x[0],given[x[1]]))
 
-        for x in triplets[k]:
-            x12 = x[1]%12
-            if not x12 in given:
-                given[x12] = current
-                current += 1
-            array = trip_schemes12.setdefault(k,[])
-            array.append((x[0],given[x12]))
 
-        
-        as_tuple = tuple(map(lambda x: (x[0] % (section_length),x[1]), \
-                             triplets[k]))
-        occurance_count[as_tuple] = occurance_count.setdefault(as_tuple,0)+1
-        as_tuple = tuple(map(lambda x: (x[0] % (section_length),x[1]%12), \
-                             triplets[k]))
-        occurance_count12[as_tuple] = occurance_count12.setdefault(as_tuple,0)+1
 
-        as_tuple = tuple(map(lambda x: (x[0] % (section_length),x[1]), \
-                             trip_schemes[k]))
-        occurance_counts[as_tuple] = occurance_counts.setdefault(as_tuple,0)+1
+            given = {}
+            current = 1
 
-        if not as_tuple in keys:
-            keys.append(as_tuple)
-        
-        as_tuple = tuple(map(lambda x: (x[0] % (section_length),x[1]), \
-                             trip_schemes12[k]))
-        occurance_count12s[as_tuple] = occurance_count12s.setdefault(as_tuple,0)+1
-        
-        
-    print("\n\n\n")
-    print("section length=            ",
-          section_length)
-    print("note count    =            ",
-          section_length/(quarter/6))    
-    print("#different occurances=     ",
-          len(occurance_count))
-    print("#of sections reoccuring=   ",
-          sum(map(lambda x:occurance_count[x]-1,\
-                                              occurance_count)))
-    print("    ...time span       =   ",
-          section_length*sum(map(lambda x:occurance_count[x]-1,\
-                                              occurance_count)))
-    
-    print("#different occurances%12=  ",
-          len(occurance_count12))
-    print("#of sections reoccuring%12=",
-          sum(map(lambda x:occurance_count12[x]-1,\
-                                              occurance_count12)))
-    print("    ...time span       =   ",
-          section_length*sum(map(lambda x:occurance_count12[x]-1,\
-                                              occurance_count12)))
-    print("")
-    print("#different schemes=        ",
-          len(occurance_counts))
-    print("#of sections reoccuring=   ",
-          sum(map(lambda x:occurance_counts[x]-1,\
-                                              occurance_counts)))
-    print("    ...time span       =   ",
-          section_length*sum(map(lambda x:occurance_counts[x]-1,\
-                                              occurance_counts)))
-    
-    print("#different schemes%12=     ",
-          len(occurance_count12s))
-    print("#of sections reoccuring%12=",
-          sum(map(lambda x:occurance_count12s[x]-1,\
-                                              occurance_count12s)))
-    print("    ...time span       =   ",
-          section_length*sum(map(lambda x:occurance_count12s[x]-1,\
-                                              occurance_count12s)))
 
-    print("")
-    
-    
+            for x in triplets[k]:
+                x12 = x[1]%12
+                if not x12 in given:
+                    given[x12] = current
+                    current += 1
+                array = trip_schemes12.setdefault(k,[])
+                array.append((x[0],given[x12]))
 
-    for k in range(max(trip_schemes)+1):
-        if not k in trip_schemes:
-            print(" ",end="")
-        else:
+
             as_tuple = tuple(map(lambda x: (x[0] % (section_length),x[1]), \
-                             trip_schemes[k]))
-            print(chr(65+keys.index(as_tuple)),end="")
-            
-        if k%2==1:
-            print(" ",end="")       
-        if k%4==3:
-            print(" ",end="")
-        if k%32==31:
-            print("")
+                                 triplets[k]))
+            occurance_count[as_tuple] = occurance_count.setdefault(as_tuple,0)+1
+            as_tuple = tuple(map(lambda x: (x[0] % (section_length),x[1]%12), \
+                                 triplets[k]))
+            occurance_count12[as_tuple] = occurance_count12.setdefault(as_tuple,0)+1
 
-    print("\n\n\nwhere: ")
-    
-    for k in keys:
-        code = ""
-        last = -1
-        for x in k:
-            if x[0]!=last:
-                code += " "+str(x[1])
-                last = x[0]
+            as_tuple = tuple(map(lambda x: (x[0] % (section_length),x[1]), \
+                                 trip_schemes[k]))
+            occurance_counts[as_tuple] = occurance_counts.setdefault(as_tuple,0)+1
+
+            if not as_tuple in keys:
+                keys.append(as_tuple)
+
+            as_tuple = tuple(map(lambda x: (x[0] % (section_length),x[1]), \
+                                 trip_schemes12[k]))
+            occurance_count12s[as_tuple] = occurance_count12s.setdefault(as_tuple,0)+1
+
+
+        print("\n\n\n",file=hfile)
+        print("section length=            ",
+              section_length,file=hfile)
+        print("note count    =            ",
+              section_length/(quarter/6),file=hfile)    
+        print("#different occurances=     ",
+              len(occurance_count),file=hfile)
+        print("#of sections reoccuring=   ",
+              sum(map(lambda x:occurance_count[x]-1,\
+                                                  occurance_count)),file=hfile)
+        print("    ...time span       =   ",
+              section_length*sum(map(lambda x:occurance_count[x]-1,\
+                                                  occurance_count)),file=hfile)
+
+        print("#different occurances%12=  ",
+              len(occurance_count12),file=hfile)
+        print("#of sections reoccuring%12=",
+              sum(map(lambda x:occurance_count12[x]-1,\
+                                                  occurance_count12)),file=hfile)
+        print("    ...time span       =   ",
+              section_length*sum(map(lambda x:occurance_count12[x]-1,\
+                                                  occurance_count12)),file=hfile)
+        print("",file=hfile)
+        print("#different schemes=        ",
+              len(occurance_counts),file=hfile)
+        print("#of sections reoccuring=   ",
+              sum(map(lambda x:occurance_counts[x]-1,\
+                                                  occurance_counts)),file=hfile)
+        print("    ...time span       =   ",
+              section_length*sum(map(lambda x:occurance_counts[x]-1,\
+                                                  occurance_counts)),file=hfile)
+
+        print("#different schemes%12=     ",
+              len(occurance_count12s),file=hfile)
+        print("#of sections reoccuring%12=",
+              sum(map(lambda x:occurance_count12s[x]-1,\
+                                                  occurance_count12s)),file=hfile)
+        print("    ...time span       =   ",
+              section_length*sum(map(lambda x:occurance_count12s[x]-1,\
+                                                  occurance_count12s)),file=hfile)
+
+        print("",file=hfile)
+
+
+
+        for k in range(max(trip_schemes)+1):
+            if not k in trip_schemes:
+                print(".",end="",file=hfile)
             else:
-                code += str(x[1])
+                as_tuple = tuple(map(lambda x: (x[0] % (section_length),x[1]), \
+                                 trip_schemes[k]))
+                print(chr(65+keys.index(as_tuple)),end="",file=hfile)
+
+            if k%2==1:
+                print(" ",end="",file=hfile)       
+            if k%4==3:
+                print(" ",end="",file=hfile)
+            if k%32==31:
+                print("",file=hfile)
+
+        eightnotes = {}
+
+        with open("triplet-reduction","w") as hfile2:
+
+            for k in range(max(triplets)+1):
+                if k%2 ==0:
+                    print("",file=hfile2)
+                if k%4==0:
+                    print("% TAKT ",(k/4)+1,file=hfile2)
+                if not k in triplets:
+                    print("  r",file=hfile2)
+                else:
+                    ps = set(map(lambda x: x[1],triplets[k]))
+                    ps = list(ps)
+                    ps.sort()
+                    print("  <"+" ".join(map(lambda z: ly_pitch(z), ps))+">",file=hfile2)
+                    eightnotes[k] = ps
+
+        barnotes = {}
+        for k in range(max(triplets)+1):
+            if not k in triplets:
+                continue
+            array = barnotes.setdefault(k/4, [])
+            array.extend(map(lambda x: x[1],triplets[k]))
+
+        for k in barnotes:
+            x =list ( set( barnotes[k]) )
+            x.sort()
+            barnotes[k] = x
+
+        eightvars = {}
+        occurs = {}
+        varize = []
+
+        for k in eightnotes:
+            barstuff = barnotes[k/4]
+            eightvars[k] = map(lambda x:barstuff.index(x),eightnotes[k])
+            tup = tuple(eightvars[k])
+            occurs[tup] = occurs.setdefault(tup,0)+1
+            if not tup in varize:
+                varize.append(tup)
+
+        stackering = ""
+
+        stackednbrs = []
+        stackindexes = []
+
+        for k in range(max(eightvars)+1):
+            if k in eightvars:
+                print("%3d"%varize.index(tuple(eightvars[k])),end="")
+                stackering += "%3d"%varize.index(tuple(eightvars[k]))
+            else:
+                print(" xx",end="")
+                stackering += " xx"
+            if k%4==3:
+                if not stackering in stackednbrs:
+                    stackednbrs.append(stackering)
+                stackindexes.append(stackednbrs.index(stackering))
+                stackering = ""
+                
+                print(" ",end="")
+            if k%8==7:
+                print(" ",end="")
+                
+            if k%16==15:
+                
+                print("")
+
+
+
+        bar4notes = {}
             
-        print(chr(65+keys.index(k)),"=",code, end="   ")
-        if keys.index(k) % 6 == 5:
-            print("")
+                    
+        with open("bar-reduction","w") as hfile2:
+            for k in range(max(barnotes)+1):
+                if k%4 == 0:
+                    print(" % TAKT ",k+1,file=hfile2)
+                if not k in barnotes:
+                    print("  r",file=hfile2)
+                else:
+                    sumarray = bar4notes.setdefault(k/4,[])
+                    sumarray.append(barnotes[k][0])
+                    
+                    print("  <"+" ".join(map(lambda z: ly_pitch(z), barnotes[k]))+">",file=hfile2)
+
+                    
+        with open("bar-reduction-b","w") as hfile2:
+            for k in range(max(bar4notes)+1):
+                if k%4 == 0:
+                    print(" % TAKT ",k+1,file=hfile2)
+                if not k in bar4notes:
+                    print("  r",file=hfile2)
+                else:
+                    pitchmod = list(set(bar4notes[k]))#list(set(map(lambda x: ((x+6)%12)-6 + 72, bar4notes[k])))
+                    pitchmod.sort()
+                    
+                    #print("  <"+" ".join(map(lambda z: ly_pitch(z), pitchmod))+">",file=hfile2)
+                    print("  <"+" ".join(map(lambda z: ly_pitch(z), pitchmod))+">",file=hfile2)
+                    
+
+
+        print("\n\n\nwhere: ",file=hfile)
+
+        for k in keys:
+            code = ""
+            last = -1
+            for x in k:
+                if x[0]!=last:
+                    code += " "+str(x[1])
+                    last = x[0]
+                else:
+                    code += str(x[1])
+
+            print(chr(65+keys.index(k)),"=",code, end="   ",file=hfile)
+            if keys.index(k) % 6 == 5:
+                print("",file=hfile)
+
 
 
 
