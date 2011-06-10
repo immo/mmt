@@ -11,10 +11,10 @@ import math
 
 #flipped video format :)
 
-v_aspect = 4/3.#16/9.
-h_aspect = 3/4.#9/16.
+v_aspect = 16/9.#4/3.#
+h_aspect = 9/16.#3/4.#
 
-video_w = 600#720
+video_w = 1080#720#
 video_h = int(video_w*v_aspect)#video_w*16/9
 rotate90 = 1
 line_stroke_width = 1.2
@@ -27,6 +27,38 @@ left_window_times = 0#midi_frames_per_second/2
 right_window_times = 0#midi_frames_per_second
 pre_glow_frames = movie_frames_per_second/10
 after_glow_frames = movie_frames_per_second/4
+
+beats_at_ms = [(0,0),(480,1000),(480*4,2000),(480*8,10000)]
+first_beat_ms = min( map(lambda x:x[0],beats_at_ms) )
+last_beat_ms = max( map(lambda x:x[0],beats_at_ms) )
+beats_at_ms.sort()
+
+def midi_beats_to_frames(tmidi):
+    if tmidi < first_beat_ms:
+        b0 = beats_at_ms[0][0]
+        f0 = beats_at_ms[0][1]
+        return (tmidi-b0)*movie_frames_per_second/midi_frames_per_second\
+               + f0*movie_frames_per_second/1000
+    if tmidi > last_beat_ms:
+        b0 = beats_at_ms[-1][0]
+        f0 = beats_at_ms[-1][1]
+        return (tmidi-b0)*movie_frames_per_second/midi_frames_per_second\
+               + f0*movie_frames_per_second/1000
+    before = filter(lambda x:x[0]<=tmidi, beats_at_ms)[-1]
+    after = filter(lambda x:x[0]>=tmidi, beats_at_ms)[0]
+    if before == after:
+        return before[1]*movie_frames_per_second/1000
+
+    b0 = before[0]
+    f0 = before[1]
+    b1 = after[0]
+    f1 = after[1]
+
+    f = f0 + ((tmidi-b0)*(f1-f0))/(b1-b0)
+
+    return f*movie_frames_per_second/1000
+        
+    return (t*movie_frames_per_second)/midi_frames_per_second
 
 def i2str(i):
     s = str(i)
@@ -181,7 +213,7 @@ times_frames = {}
 times_frames_up_to = {}
 t_before = 0
 for t in times: #should we check midi for BPM and tempo events??
-    times_frames[t] = (t*movie_frames_per_second)/midi_frames_per_second
+    times_frames[t] = midi_beats_to_frames(t)
     times_frames_up_to[t_before] = times_frames[t]
     t_before = t
 
@@ -356,7 +388,8 @@ outfile.write("times_window = "+repr(times_window)+"\n")
 def make_smooth_frames_wins():
     times = times_window.keys()
     times.sort()
-    frames = map(lambda x: int(x*float(movie_frames_per_second)/float(midi_frames_per_second)),times)
+    #frames = map(lambda x: int(x*float(movie_frames_per_second)/float(midi_frames_per_second)),times)
+    frames = map(midi_beats_to_frames,times)
 
     plotf = []
     plotw = []
@@ -491,6 +524,8 @@ def make_smooth_frames_wins():
 print("Make smooth frame windows....")
 smooth_windows = make_smooth_frames_wins()
 print("done.")
+
+print("Win range: ",wins[0]," to ",wins[-1])
 
 for t in wins:
     #if None:
